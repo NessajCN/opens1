@@ -1,0 +1,135 @@
+{
+  "name": "opens1",
+  "displayName": "Open S1",
+  "description": "Stage1st vscode extension",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.71.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:opens1.refresh",
+    "onView:stage1st"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "opens1.refresh",
+        "title": "Refresh New Threads",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "opens1.signin",
+        "title": "Sign in S1",
+        "icon": {
+          "light": "resources/light/sign-in.svg",
+          "dark": "resources/dark/sign-in.svg"
+        }
+      },
+      {
+        "command": "opens1.signout",
+        "title": "Sign out",
+        "icon": {
+          "light": "resources/light/sign-out.svg",
+          "dark": "resources/dark/sign-out.svg"
+        }
+      },
+      {
+        "command": "opens1.newpost",
+        "title": "New post",
+        "icon": {
+          "light": "resources/light/add.svg",
+          "dark": "resources/dark/add.svg"
+        }
+      },
+      {
+        "command": "opens1.reply",
+        "title": "Reply",
+        "icon": {
+          "light": "resources/light/comment.svg",
+          "dark": "resources/dark/comment.svg"
+        }
+      },
+      {
+        "command": "opens1.showthread",
+        "title": "Show Thread"
+      }
+
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "opens1.refresh",
+          "when": "view == stage1st",
+          "group": "navigation"
+        },
+        {
+          "command": "opens1.signin",
+          "when": "view == stage1st && opens1.authenticated == false",
+          "group": "navigation"
+        },
+        {
+          "command": "opens1.signout",
+          "when": "view == stage1st && opens1.authenticated == true",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "opens1.newpost",
+          "when": "view == stage1st && viewItem == board && opens1.authenticated == true",
+          "group": "inline"
+        },
+        {
+          "command": "opens1.reply",
+          "when": "view == stage1st && viewItem == thread && opens1.authenticated == true",
+          "group": "inline"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "stage1st",
+          "name": "Stage1st",
+          "visibility": "collapsed"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^18.7.18",
+    "@types/tough-cookie": "^4.0.2",
+    "@types/vscode": "^1.71.0",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
+    "@vscode/test-electron": "^2.1.5",
+    "eslint": "^8.23.1",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "typescript": "^4.8.3"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "got": "^11.8.5",
+    "install": "^0.13.0",
+    "keytar": "^7.9.0",
+    "tough-cookie": "^4.1.2"
+  }
+}
