@@ -1,6 +1,12 @@
 import * as vscode from "vscode";
 import { findCredentials } from "keytar";
-import { S1URL, Credential, GUEST } from "./forum";
+import {
+  S1URL,
+  Credential,
+  GUEST,
+  ForumTitleProvider,
+  BoardTitle,
+} from "./forum";
 
 export const checkCredential = async () => {
   const storedCredentials = await findCredentials(S1URL.title);

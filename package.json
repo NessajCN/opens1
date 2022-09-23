@@ -19,46 +19,56 @@
       {
         "command": "opens1.refresh",
         "title": "Refresh New Threads",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "opens1.updateview",
+        "title": "Update view",
+        "icon": "$(refresh)"
       },
       {
         "command": "opens1.signin",
         "title": "Sign in S1",
-        "icon": {
-          "light": "resources/light/sign-in.svg",
-          "dark": "resources/dark/sign-in.svg"
-        }
+        "icon": "$(sign-in)"
       },
       {
         "command": "opens1.signout",
         "title": "Sign out",
-        "icon": {
-          "light": "resources/light/sign-out.svg",
-          "dark": "resources/dark/sign-out.svg"
-        }
-      },
-      {
-        "command": "opens1.newpost",
-        "title": "New post",
-        "icon": {
-          "light": "resources/light/add.svg",
-          "dark": "resources/dark/add.svg"
-        }
-      },
-      {
-        "command": "opens1.reply",
-        "title": "Reply",
-        "icon": {
-          "light": "resources/light/comment.svg",
-          "dark": "resources/dark/comment.svg"
-        }
+        "icon": "$(sign-out)"
       },
       {
         "command": "opens1.showthread",
         "title": "Show Thread"
+      },
+      {
+        "command": "opens1.nextboardpage",
+        "title": "Next Board Page",
+        "icon": "$(triangle-right)"
+      },
+      {
+        "command": "opens1.lastboardpage",
+        "title": "Last Board Page",
+        "icon": "$(triangle-left)"
+      },
+      {
+        "command": "opens1.nextthreadpage",
+        "title": "Next Thread Page",
+        "icon": "$(triangle-right)"
+      },
+      {
+        "command": "opens1.lastthreadpage",
+        "title": "Last Thread Page",
+        "icon": "$(triangle-left)"
+      },
+      {
+        "command": "opens1.newpost",
+        "title": "New post",
+        "icon": "$(add)"
+      },
+      {
+        "command": "opens1.reply",
+        "title": "Reply",
+        "icon": "$(comment)"
       }
 
     ],
@@ -67,30 +77,56 @@
         {
           "command": "opens1.refresh",
           "when": "view == stage1st",
-          "group": "navigation"
+          "group": "navigation@0"
         },
         {
           "command": "opens1.signin",
           "when": "view == stage1st && opens1.authenticated == false",
-          "group": "navigation"
+          "group": "navigation@1"
         },
         {
           "command": "opens1.signout",
           "when": "view == stage1st && opens1.authenticated == true",
-          "group": "navigation"
+          "group": "navigation@2"
         }
       ],
       "view/item/context": [
         {
+          "command": "opens1.lastboardpage",
+          "when": "view == stage1st && viewItem =~ /boardp/ && viewItem != boardp1 && opens1.authenticated == true",
+          "group": "inline@0"
+        },
+        {
+          "command": "opens1.nextboardpage",
+          "when": "view == stage1st && viewItem =~ /boardp/ && viewItem != boardp10 && opens1.authenticated == true",
+          "group": "inline@1"
+        },
+        {
+          "command": "opens1.updateview",
+          "when": "view == stage1st && viewItem =~ /board/ ",
+          "group": "inline@2"
+        },
+        {
+          "command": "opens1.lastthreadpage",
+          "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadp1 && opens1.authenticated == true",
+          "group": "inline@3"
+        },
+        {
+          "command": "opens1.nextthreadpage",
+          "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadp10 && opens1.authenticated == true",
+          "group": "inline@4"
+        },
+        {
           "command": "opens1.newpost",
-          "when": "view == stage1st && viewItem == board && opens1.authenticated == true",
-          "group": "inline"
+          "when": "view == stage1st && viewItem =~ /board/ && opens1.authenticated == true",
+          "group": "inline@5"
         },
         {
           "command": "opens1.reply",
-          "when": "view == stage1st && viewItem == thread && opens1.authenticated == true",
-          "group": "inline"
+          "when": "view == stage1st && viewItem =~ /thread/ && opens1.authenticated == true",
+          "group": "inline@6"
         }
+
       ]
     },
     "views": {
