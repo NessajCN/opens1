@@ -228,7 +228,6 @@ export class ForumTitleProvider
       this.updateView(element);
     }
   }
-
 }
 
 export class ThreadTitle extends vscode.TreeItem {
@@ -247,7 +246,7 @@ export class ThreadTitle extends vscode.TreeItem {
     this.command = {
       title: "Show Thread",
       command: "opens1.showthread",
-      arguments: [this]
+      arguments: [this],
       // arguments: [vscode.Uri.parse(`s1:${this.path}?page=${this.page}`)]
     };
     // this.command = vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`${S1URL.host}${this.href}`));
@@ -260,7 +259,6 @@ export class ThreadTitle extends vscode.TreeItem {
 }
 
 export class BoardTitle extends vscode.TreeItem {
-
   constructor(
     public readonly title: string,
     public readonly path: string,
@@ -298,8 +296,6 @@ export class BoardTitle extends vscode.TreeItem {
   // };
   iconPath = new vscode.ThemeIcon("comment-discussion");
 
-
   public page: number = 1;
   private tid: number = Number(this.path.slice(4, -5));
-
 }

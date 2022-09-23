@@ -16,12 +16,12 @@ export class ThreadProvider implements vscode.TextDocumentContentProvider {
 
   private async threadContent(uri: vscode.Uri) {
     const threadDoc = await got(
-        // `${S1URL.host}/archiver/${uri.path}?${uri.query}`,
-        `${S1URL.host}/archiver/tid-${uri.path.slice(0,-3)}.html?${uri.query}`,
-        { cookieJar: this.cookieJar }
-      ).text();
-      const $: cheerio.CheerioAPI = cheerio.load(threadDoc);
-      const content = $('#content').text().trim();
-      return content;
-    }
+      // `${S1URL.host}/archiver/${uri.path}?${uri.query}`,
+      `${S1URL.host}/archiver/tid-${uri.path.slice(0, -3)}.html?${uri.query}`,
+      { cookieJar: this.cookieJar }
+    ).text();
+    const $: cheerio.CheerioAPI = cheerio.load(threadDoc);
+    const content = $("#content").text().trim();
+    return content;
+  }
 }
