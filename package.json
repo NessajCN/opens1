@@ -53,12 +53,12 @@
       {
         "command": "opens1.nextthreadpage",
         "title": "Next Thread Page",
-        "icon": "$(triangle-right)"
+        "icon": "$(arrow-small-right)"
       },
       {
         "command": "opens1.lastthreadpage",
         "title": "Last Thread Page",
-        "icon": "$(triangle-left)"
+        "icon": "$(arrow-small-left)"
       },
       {
         "command": "opens1.newpost",
@@ -93,12 +93,12 @@
       "view/item/context": [
         {
           "command": "opens1.lastboardpage",
-          "when": "view == stage1st && viewItem =~ /boardp/ && viewItem != boardp1 && opens1.authenticated == true",
+          "when": "view == stage1st && viewItem =~ /boardp/ && viewItem != boardp1 ",
           "group": "inline@0"
         },
         {
           "command": "opens1.nextboardpage",
-          "when": "view == stage1st && viewItem =~ /boardp/ && viewItem != boardp10 && opens1.authenticated == true",
+          "when": "view == stage1st && viewItem =~ /boardp/ && viewItem != boardp10 ",
           "group": "inline@1"
         },
         {
@@ -108,12 +108,12 @@
         },
         {
           "command": "opens1.lastthreadpage",
-          "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadp1 && opens1.authenticated == true",
+          "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadp1 && viewItem != threadp0",
           "group": "inline@3"
         },
         {
           "command": "opens1.nextthreadpage",
-          "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadp10 && opens1.authenticated == true",
+          "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadpend && viewItem != threadp0",
           "group": "inline@4"
         },
         {
