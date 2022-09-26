@@ -40,6 +40,14 @@ First alpha version.
 
 Initial alpha version.
 
+### 0.0.2
+
+Add logo.
+
+### 0.0.3
+
+Fix issues when posting.
+
 ---
 
 ## Extension guidelines

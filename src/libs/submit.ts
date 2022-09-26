@@ -21,7 +21,7 @@ export const submitNewPost = async (
     formhash: formhash || "",
     posttime: Math.floor(Date.now() / 1000),
     wysiwyg: "1",
-    // typeid: 148,
+    typeid: 151,
     subject: newpost.subject,
     message: newpost.message,
     readperm: 0,
