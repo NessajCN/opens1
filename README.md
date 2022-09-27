@@ -1,5 +1,7 @@
 # Brief introduction of OpenS1
-This extension is for S1ers to have a convenient way of viewing the forum when coding.s
+This extension is for S1ers to have a convenient way of viewing the forum when coding.
+
+###Extension Link [Marketplace link of OpenS1](https://marketplace.visualstudio.com/items?itemName=nessaj.opens1)
 
 ## Features
 
@@ -22,11 +24,11 @@ or Centos:
 ```
 sudo yum install gnome-keyring-devel
 ```
- .
+
 
 ## Extension Settings
 
-Configurations have not been contributed. I'll add 
+Configurations have not been contributed. I'll add them soon.
 
 ## Known Issues
 

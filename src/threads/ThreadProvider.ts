@@ -49,7 +49,7 @@ export default class ThreadProvider implements TextDocumentContentProvider {
   private getPostTexts(doc: string) {
     const $: cheerio.CheerioAPI = cheerio.load(doc);
     $("#content .page").remove();
-    const posts = $("#content").html()?.split(/<p.+?<\/p>/s).map(post=> post.trim().replace(/<h3><\/h3>/g,"").trim().replace(/<br>/g,""));
+    const posts = $("#content").html()?.split(/<p.+?<\/p>/s).map(post=> post.trim().replace(/<h3><\/h3>/g,"").trim().replace(/<br>/g,"\n"));
     // $("#content p.author").remove();
     // const posts = $("#content").map((i,el)=>$(el).text().trim()).toArray();
     posts?.shift();
