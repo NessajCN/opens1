@@ -1,4 +1,4 @@
-# Brief introduction of OpenS1
+# OpenS1 VSCode extension
 This extension is for S1ers to have a convenient way of viewing the forum when coding.
 
 [Extension Link](https://marketplace.visualstudio.com/items?itemName=nessaj.opens1)
@@ -49,6 +49,11 @@ Add logo.
 ### 0.0.3
 
 Fix issues when posting.
+
+### 0.0.4
+
+Fix unicode display error.
+Add menu button for turning thread page.
 
 ---
 

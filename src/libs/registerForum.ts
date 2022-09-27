@@ -59,6 +59,7 @@ const registerForum = (
       forumProvider.turnThreadPage(thread, thread.page + 1);
       threadProvider.refresh(thread.threadUri);
       await commands.executeCommand("markdown.showPreview", thread.threadUri);
+      // await window.showTextDocument(thread.threadUri, { preview: true });
     })
   );
   subscriptions.push(
@@ -66,6 +67,26 @@ const registerForum = (
       forumProvider.turnThreadPage(thread, thread.page - 1);
       // threadProvider.refresh(thread.threadUri);
       await commands.executeCommand("markdown.showPreview", thread.threadUri);
+      // await window.showTextDocument(thread.threadUri, { preview: true });
+    })
+  );
+  subscriptions.push(
+    commands.registerCommand("opens1.turntopage", async (thread: ThreadTitle) => {
+      const page = await window.showInputBox({
+        title: "跳转页码",
+        prompt: `共${thread.pagination}页, 当前第${thread.page}页`
+      });
+      if(!page || Number.isNaN(Number(page))) {
+        window.showInformationMessage("Invalid input. Please enter the number of page.");
+        return; 
+      } else if (Number(page)<1 || Number(page)>thread.pagination) {
+        window.showInformationMessage("Invalid page number.");
+        return; 
+      }
+      forumProvider.turnThreadPage(thread, Number(page));
+      // threadProvider.refresh(thread.threadUri);
+      await commands.executeCommand("markdown.showPreview", thread.threadUri);
+      // await window.showTextDocument(thread.threadUri, { preview: true });
     })
   );
   subscriptions.push(
@@ -134,9 +155,9 @@ const registerForum = (
         //   `s1:${thread.path.slice(4, -5)}.md?page=${thread.page}`
         // );
         // const doc = await workspace.openTextDocument(uri);
-        // await window.showTextDocument(thread.threadUri, { preview: true });
         threadProvider.refresh(thread.threadUri);
         await commands.executeCommand("markdown.showPreview", thread.threadUri);
+        // await window.showTextDocument(thread.threadUri, { preview: true });
       }
     )
   );

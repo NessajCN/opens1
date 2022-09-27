@@ -1,6 +1,6 @@
 {
   "name": "opens1",
-  "displayName": "Open S1",
+  "displayName": "OpenS1",
   "description": "Stage1st vscode extension",
   "publisher": "nessaj",
   "icon": "logo/s1logo-256.png",
@@ -80,8 +80,12 @@
         "command": "opens1.reply",
         "title": "Reply",
         "icon": "$(comment)"
+      },
+      {
+        "command": "opens1.turntopage",
+        "title": "Turn to page",
+        "icon": "$(arrow-small-left)"
       }
-
     ],
     "menus": {
       "view/title": [
@@ -136,8 +140,11 @@
           "command": "opens1.reply",
           "when": "view == stage1st && viewItem =~ /thread/ && opens1.authenticated == true",
           "group": "inline@6"
+        },
+        {
+          "command": "opens1.turntopage",
+          "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadp0"
         }
-
       ]
     },
     "views": {
