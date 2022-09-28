@@ -10,12 +10,15 @@ import { submitReply, submitNewPost } from "./submit";
 import { replyPrompt, newpostPrompt } from "./prompt";
 
 import ThreadProvider from "../threads/ThreadProvider";
+import { Socket } from "socket.io-client";
+import { GUEST } from "../types/S1types";
 
 const registerForum = (
   subscriptions: ExtensionContext["subscriptions"],
   forumProvider: ForumTitleProvider,
   cookieJar: CookieJar,
-  threadProvider: ThreadProvider
+  threadProvider: ThreadProvider,
+  socket: Socket
 ) => {
   let currentThread: ThreadTitle | null = null;
   subscriptions.push(
@@ -33,6 +36,12 @@ const registerForum = (
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   subscriptions.push(
+    commands.registerCommand("opens1.configure", () => {
+      commands.executeCommand("workbench.action.openSettings", `OpenS1`);
+    })
+  );
+
+  subscriptions.push(
     commands.registerCommand("opens1.refresh", () => {
       // The code you place here will be executed every time your command is executed
       // window.showInformationMessage("refreshed!");
@@ -42,6 +51,23 @@ const registerForum = (
   subscriptions.push(
     commands.registerCommand("opens1.updateview", (board: BoardTitle) => {
       forumProvider.turnBoardPage(board, 1);
+    })
+  );
+
+  subscriptions.push(
+    commands.registerCommand("opens1.hideboard", async (board: BoardTitle) => {
+      const conf = workspace.getConfiguration("opens1");
+      const hiddenBoards = conf.get<string[]>("hiddenBoards");
+      if (!hiddenBoards) {
+        await conf.update("hiddenBoards", [board.title]);
+      } else {
+        hiddenBoards.push(board.title);
+        await conf.update("hiddenBoards", hiddenBoards);
+      }
+      forumProvider.refresh();
+      window.showInformationMessage(
+        `${board.title} has been hidden. Go to extension setting page to unhide them if you wish.`
+      );
     })
   );
   subscriptions.push(
@@ -56,63 +82,90 @@ const registerForum = (
   );
 
   subscriptions.push(
-    commands.registerCommand("opens1.nextthreadpage", async (thread?: ThreadTitle | undefined) => {
-      if (!thread && currentThread) thread = currentThread;
-      if (thread) {
-        forumProvider.turnThreadPage(thread, thread.page + 1);
-        threadProvider.refresh(thread.threadUri);
-        currentThread = thread;
-        await commands.executeCommand("markdown.showPreview", thread.threadUri);
-        // await window.showTextDocument(thread.threadUri, { preview: true });
+    commands.registerCommand(
+      "opens1.nextthreadpage",
+      async (thread?: ThreadTitle | undefined) => {
+        if (!thread && currentThread) {
+          thread = currentThread;
+        }
+        if (thread) {
+          forumProvider.turnThreadPage(thread, thread.page + 1);
+          threadProvider.refresh(thread.threadUri);
+          currentThread = thread;
+          await commands.executeCommand(
+            "markdown.showPreview",
+            thread.threadUri
+          );
+          // await window.showTextDocument(thread.threadUri, { preview: true });
+        }
       }
-    })
+    )
   );
   subscriptions.push(
-    commands.registerCommand("opens1.lastthreadpage", async (thread?: ThreadTitle | undefined) => {
-      if (!thread && currentThread) thread = currentThread;
-      if (thread) {
-        forumProvider.turnThreadPage(thread, thread.page - 1);
+    commands.registerCommand(
+      "opens1.lastthreadpage",
+      async (thread?: ThreadTitle | undefined) => {
+        if (!thread && currentThread) {
+          thread = currentThread;
+        }
+        if (thread) {
+          forumProvider.turnThreadPage(thread, thread.page - 1);
+          // threadProvider.refresh(thread.threadUri);
+          currentThread = thread;
+          await commands.executeCommand(
+            "markdown.showPreview",
+            thread.threadUri
+          );
+          // await window.showTextDocument(thread.threadUri, { preview: true });
+        }
+      }
+    )
+  );
+  subscriptions.push(
+    commands.registerCommand(
+      "opens1.turntopage",
+      async (thread: ThreadTitle) => {
+        const page = await window.showInputBox({
+          title: "跳转页码",
+          prompt: `共${thread.pagination}页, 当前第${thread.page}页`,
+        });
+        if (!page || Number.isNaN(Number(page))) {
+          window.showInformationMessage(
+            "Invalid input. Please enter the number of page."
+          );
+          return;
+        } else if (Number(page) < 1 || Number(page) > thread.pagination) {
+          window.showInformationMessage("Invalid page number.");
+          return;
+        }
+        forumProvider.turnThreadPage(thread, Number(page));
         // threadProvider.refresh(thread.threadUri);
         currentThread = thread;
         await commands.executeCommand("markdown.showPreview", thread.threadUri);
         // await window.showTextDocument(thread.threadUri, { preview: true });
       }
-    })
-  );
-  subscriptions.push(
-    commands.registerCommand("opens1.turntopage", async (thread: ThreadTitle) => {
-      const page = await window.showInputBox({
-        title: "跳转页码",
-        prompt: `共${thread.pagination}页, 当前第${thread.page}页`
-      });
-      if (!page || Number.isNaN(Number(page))) {
-        window.showInformationMessage("Invalid input. Please enter the number of page.");
-        return;
-      } else if (Number(page) < 1 || Number(page) > thread.pagination) {
-        window.showInformationMessage("Invalid page number.");
-        return;
-      }
-      forumProvider.turnThreadPage(thread, Number(page));
-      // threadProvider.refresh(thread.threadUri);
-      currentThread = thread;
-      await commands.executeCommand("markdown.showPreview", thread.threadUri);
-      // await window.showTextDocument(thread.threadUri, { preview: true });
-    })
+    )
   );
   subscriptions.push(
     commands.registerCommand("opens1.signin", async () => {
       const logininfo = await loginPrompt();
-      const authenticated = await login(logininfo, cookieJar);
-      authenticated
-        ? window.showInformationMessage(
+      const authenticated = await login(logininfo, cookieJar, socket);
+      if (authenticated) {
+        forumProvider.credential = logininfo;
+        window.showInformationMessage(
           `Successfully signed in as ${logininfo.username}!`
-        )
-        : window.showInformationMessage("Authentication failed.");
+        );
+      } else {
+        forumProvider.credential = GUEST;
+        window.showInformationMessage("Authentication failed.");
+      }
+      forumProvider.refresh();
     })
   );
   subscriptions.push(
     commands.registerCommand("opens1.signout", async () => {
-      await logout(cookieJar);
+      await logout(cookieJar, socket);
+      forumProvider.credential = GUEST;
       forumProvider.refresh();
       window.showInformationMessage("You have logged out.");
     })
@@ -144,11 +197,7 @@ const registerForum = (
       if (!newpost) {
         return;
       } else {
-        const response = await submitNewPost(
-          board.fid,
-          newpost,
-          cookieJar
-        );
+        const response = await submitNewPost(board.fid, newpost, cookieJar);
         // console.log(response);
         forumProvider.updateView(board);
         window.showInformationMessage("New post submitted.");
