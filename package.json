@@ -87,6 +87,18 @@
         "icon": "$(arrow-small-left)"
       }
     ],
+    "keybindings": [
+      {
+        "command": "opens1.nextthreadpage",
+        "key": "right",
+        "when": "!inputFocus"
+      },
+      {
+        "command": "opens1.lastthreadpage",
+        "key": "left",
+        "when": "!inputFocus"
+      }
+    ],
     "menus": {
       "view/title": [
         {
