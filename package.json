@@ -15,7 +15,7 @@
   },
   "version": "0.1.0",
   "engines": {
-    "vscode": "^1.71.0"
+    "vscode": "^1.70.0"
   },
   "categories": [
     "Other"
@@ -25,7 +25,35 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "OpenS1",
+      "properties": {
+        "opens1.threadDisplayStyle": {
+          "type": "string",
+          "default": "markdown",
+          "enum": [
+            "markdown",
+            "code"
+          ],
+          "enumDescriptions": [
+            "Display thread contents in rendered markdown format.",
+            "Disguise thread contents as commented typescript block."
+          ],
+          "description": "How you want your threads be displayed."
+        },
+        "opens1.hiddenBoards": {
+          "type": "array",
+          "default": [],
+          "description": "Hidden boards are listed here. Delete the listed board names to unhide them."
+        }
+      }
+    },
     "commands": [
+      {
+        "command": "opens1.configure",
+        "title": "Change OpenS1 settings",
+        "icon": "$(settings-gear)"
+      },
       {
         "command": "opens1.refresh",
         "title": "Refresh New Threads",
@@ -35,6 +63,10 @@
         "command": "opens1.updateview",
         "title": "Update view",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "opens1.hideboard",
+        "title": "Hide this board"
       },
       {
         "command": "opens1.signin",
@@ -101,19 +133,24 @@
     "menus": {
       "view/title": [
         {
-          "command": "opens1.refresh",
+          "command": "opens1.configure",
           "when": "view == stage1st",
           "group": "navigation@0"
         },
         {
+          "command": "opens1.refresh",
+          "when": "view == stage1st",
+          "group": "navigation@1"
+        },
+        {
           "command": "opens1.signin",
           "when": "view == stage1st && opens1.authenticated == false",
-          "group": "navigation@1"
+          "group": "navigation@2"
         },
         {
           "command": "opens1.signout",
           "when": "view == stage1st && opens1.authenticated == true",
-          "group": "navigation@2"
+          "group": "navigation@3"
         }
       ],
       "view/item/context": [
@@ -155,6 +192,10 @@
         {
           "command": "opens1.turntopage",
           "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadp0"
+        },
+        {
+          "command": "opens1.hideboard",
+          "when": "view == stage1st && viewItem =~ /board/"
         }
       ]
     },

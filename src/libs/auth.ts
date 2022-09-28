@@ -10,6 +10,7 @@ import {
 import got from "got";
 import { CookieJar, Cookie } from "tough-cookie";
 import { setPassword, deletePassword } from "keytar";
+import { Socket } from "socket.io-client";
 
 export const checkCredential = async () => {
   const storedCredentials = await findCredentials(S1URL.title);
@@ -34,15 +35,11 @@ export const loginPrompt = async () => {
     prompt: "密码:",
     password: true,
   };
-  const inputUser: string | undefined = await window.showInputBox(
-    userOption
-  );
+  const inputUser: string | undefined = await window.showInputBox(userOption);
   if (!inputUser) {
     return GUEST;
   }
-  const inputPass: string | undefined = await window.showInputBox(
-    passOption
-  );
+  const inputPass: string | undefined = await window.showInputBox(passOption);
   if (!inputPass) {
     return GUEST;
   }
@@ -88,7 +85,7 @@ export const clearStoredCredentials = async () => {
   commands.executeCommand("setContext", "opens1.authenticated", false);
 };
 
-export const logout = async (cookieJar: CookieJar) => {
+export const logout = async (cookieJar: CookieJar, socket: Socket) => {
   const { loginhash: _, formhash } = await getFormHash(
     `${S1URL.logoutPath}`,
     cookieJar
@@ -96,9 +93,14 @@ export const logout = async (cookieJar: CookieJar) => {
   const logoutURL: string = `${S1URL.host}${S1URL.logoutPath}&formhash=${formhash}`;
   await got(logoutURL, { cookieJar }).text();
   await clearStoredCredentials();
+  socket.emit("signout");
 };
 
-export const login = async (credential: Credential, cookieJar: CookieJar) => {
+export const login = async (
+  credential: Credential,
+  cookieJar: CookieJar,
+  socket: Socket
+) => {
   if (credential === GUEST) {
     await clearStoredCredentials();
     return false;
@@ -126,6 +128,7 @@ export const login = async (credential: Credential, cookieJar: CookieJar) => {
   const auth = await checkAuth(cookieJar);
   if (auth) {
     await setPassword(S1URL.title, credential.username, credential.password);
+    socket.emit("identify", credential.username);
   } else {
     await clearStoredCredentials();
   }
