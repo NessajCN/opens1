@@ -15,7 +15,8 @@ const registerForum = (
   subscriptions: ExtensionContext["subscriptions"],
   forumProvider: ForumTitleProvider,
   cookieJar: CookieJar,
-  threadProvider: ThreadProvider
+  threadProvider: ThreadProvider,
+  currentThread: ThreadTitle | null = null
 ) => {
   subscriptions.push(
     workspace.registerTextDocumentContentProvider("s1", threadProvider)
@@ -56,18 +57,26 @@ const registerForum = (
 
   subscriptions.push(
     commands.registerCommand("opens1.nextthreadpage", async (thread: ThreadTitle) => {
-      forumProvider.turnThreadPage(thread, thread.page + 1);
-      threadProvider.refresh(thread.threadUri);
-      await commands.executeCommand("markdown.showPreview", thread.threadUri);
-      // await window.showTextDocument(thread.threadUri, { preview: true });
+      if (!thread && currentThread) thread = currentThread;
+      if (thread) {
+        forumProvider.turnThreadPage(thread, thread.page + 1);
+        threadProvider.refresh(thread.threadUri);
+        currentThread = thread;
+        await commands.executeCommand("markdown.showPreview", thread.threadUri);
+        // await window.showTextDocument(thread.threadUri, { preview: true });
+      }
     })
   );
   subscriptions.push(
     commands.registerCommand("opens1.lastthreadpage", async (thread: ThreadTitle) => {
-      forumProvider.turnThreadPage(thread, thread.page - 1);
-      // threadProvider.refresh(thread.threadUri);
-      await commands.executeCommand("markdown.showPreview", thread.threadUri);
-      // await window.showTextDocument(thread.threadUri, { preview: true });
+      if (!thread && currentThread) thread = currentThread;
+      if (thread) {
+        forumProvider.turnThreadPage(thread, thread.page - 1);
+        // threadProvider.refresh(thread.threadUri);
+        currentThread = thread;
+        await commands.executeCommand("markdown.showPreview", thread.threadUri);
+        // await window.showTextDocument(thread.threadUri, { preview: true });
+      }
     })
   );
   subscriptions.push(
@@ -76,15 +85,16 @@ const registerForum = (
         title: "跳转页码",
         prompt: `共${thread.pagination}页, 当前第${thread.page}页`
       });
-      if(!page || Number.isNaN(Number(page))) {
+      if (!page || Number.isNaN(Number(page))) {
         window.showInformationMessage("Invalid input. Please enter the number of page.");
-        return; 
-      } else if (Number(page)<1 || Number(page)>thread.pagination) {
+        return;
+      } else if (Number(page) < 1 || Number(page) > thread.pagination) {
         window.showInformationMessage("Invalid page number.");
-        return; 
+        return;
       }
       forumProvider.turnThreadPage(thread, Number(page));
       // threadProvider.refresh(thread.threadUri);
+      currentThread = thread;
       await commands.executeCommand("markdown.showPreview", thread.threadUri);
       // await window.showTextDocument(thread.threadUri, { preview: true });
     })
@@ -95,8 +105,8 @@ const registerForum = (
       const authenticated = await login(logininfo, cookieJar);
       authenticated
         ? window.showInformationMessage(
-            `Successfully signed in as ${logininfo.username}!`
-          )
+          `Successfully signed in as ${logininfo.username}!`
+        )
         : window.showInformationMessage("Authentication failed.");
     })
   );
@@ -156,6 +166,7 @@ const registerForum = (
         // );
         // const doc = await workspace.openTextDocument(uri);
         threadProvider.refresh(thread.threadUri);
+        currentThread = thread;
         await commands.executeCommand("markdown.showPreview", thread.threadUri);
         // await window.showTextDocument(thread.threadUri, { preview: true });
       }
