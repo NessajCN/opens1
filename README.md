@@ -36,24 +36,12 @@ To be tested.
 
 ## Release Notes
 
-First alpha version.
-
-### 0.0.1
-
-Initial alpha version.
-
-### 0.0.2
-
-Add logo.
-
-### 0.0.3
-
-Fix issues when posting.
+The extension is in early Alpha version.
 
 ### 0.0.4
 
-Fix unicode display error.
-Add menu button for turning thread page.
+- Fix unicode display error.
+- Add menu button for turning thread page.
 
 ---
 

@@ -2,8 +2,27 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+
+## 0.0.4 - 2022-9-27
+
+- Fix unicode display error.
+- Add menu button for turning thread page.
+
+## 0.0.3 - 2022-9-26
+
+- Fix issues when posting.
+
+## 0.0.2 - 2022-9-26
+
+- Add logo.
+
+## 0.0.1 - 2022-9-26
+
+- Initial alpha version.
 
 ## [Unreleased]
 
 - Initial release
+
+
+

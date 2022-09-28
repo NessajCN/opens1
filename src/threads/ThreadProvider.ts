@@ -34,19 +34,6 @@ export default class ThreadProvider implements TextDocumentContentProvider {
     return md;
   }
 
-  // private fixUnicodeHexToDec(unicodeHex: string): string {
-  //   const hexRegex: RegExp = /&#x(.+?);/;
-  //   const matchArray = unicodeHex.match(hexRegex);
-  //   if (!matchArray) {
-  //     console.log(unicodeHex);
-  //     return unicodeHex;
-  //   } else {
-  //     const dec = Number(`0x${matchArray[1]}`);
-  //     console.log(dec);
-  //     return `&#${dec}`;
-  //   }
-  // }
-
   private getAuthors(doc: string) {
     const $: cheerio.CheerioAPI = cheerio.load(doc);
     const authors = $("#content p.author")
@@ -75,7 +62,7 @@ export default class ThreadProvider implements TextDocumentContentProvider {
       .map((post) =>
         post
           .trim()
-          .replace(/<h3>.+?<\/h3>/g, "")
+          .replace(/<h3>?.+?<\/h3>/g, "")
           .trim()
           .replace(/<br>/g, "\n")
           // .replace(/&#x.+?;/g, (hex)=> `&#${Number(`0x${hex.match(/&#x(.+?);/)[1]}`)};`)
