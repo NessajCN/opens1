@@ -15,9 +15,9 @@ const registerForum = (
   subscriptions: ExtensionContext["subscriptions"],
   forumProvider: ForumTitleProvider,
   cookieJar: CookieJar,
-  threadProvider: ThreadProvider,
-  currentThread: ThreadTitle | null = null
+  threadProvider: ThreadProvider
 ) => {
+  let currentThread: ThreadTitle | null = null;
   subscriptions.push(
     workspace.registerTextDocumentContentProvider("s1", threadProvider)
   );
