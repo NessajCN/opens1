@@ -68,7 +68,7 @@ const registerForum = (
     })
   );
   subscriptions.push(
-    commands.registerCommand("opens1.lastthreadpage", async (thread: ThreadTitle) => {
+    commands.registerCommand("opens1.lastthreadpage", async (thread?: ThreadTitle | undefined) => {
       if (!thread && currentThread) thread = currentThread;
       if (thread) {
         forumProvider.turnThreadPage(thread, thread.page - 1);
