@@ -7,87 +7,50 @@ import {
   TreeItemCollapsibleState,
   ThemeIcon,
   Uri,
-  workspace,
 } from "vscode";
-import { Credential, S1URL } from "../types/S1types";
+import { S1URL } from "../types/S1types";
 import * as cheerio from "cheerio";
 import got from "got";
 import { CookieJar } from "tough-cookie";
-import { Socket } from "socket.io-client";
-import { checkAuth } from "../libs/auth";
 
 export class ForumTitleProvider
-  implements
-    TreeDataProvider<ThreadTitle | BoardTitle | AccountTitle | OnlineUser>
+  implements TreeDataProvider<ThreadTitle | BoardTitle>
 {
   private _onDidChangeTreeData: EventEmitter<
-    ThreadTitle | BoardTitle | AccountTitle | OnlineUser | undefined | void
-  > = new EventEmitter<
-    ThreadTitle | BoardTitle | AccountTitle | OnlineUser | undefined | void
-  >();
+    ThreadTitle | BoardTitle | undefined | void
+  > = new EventEmitter<ThreadTitle | BoardTitle | undefined | void>();
 
   readonly onDidChangeTreeData: Event<
-    ThreadTitle | BoardTitle | AccountTitle | OnlineUser | undefined | void
+    ThreadTitle | BoardTitle | undefined | void
   > = this._onDidChangeTreeData.event;
 
-  constructor(
-    private cookieJar: CookieJar,
-    private onlineUsers: Map<string, string>,
-    public credential: Credential
-  ) {}
+  constructor(private cookieJar: CookieJar) {}
 
   refresh(): void {
     this._onDidChangeTreeData.fire();
   }
 
-  updateView(
-    element: BoardTitle | ThreadTitle | AccountTitle | OnlineUser
-  ): void {
+  updateView(element: BoardTitle | ThreadTitle): void {
     this._onDidChangeTreeData.fire(element);
   }
 
   getTreeItem(
-    element: ThreadTitle | BoardTitle | AccountTitle | OnlineUser
+    element: ThreadTitle | BoardTitle
   ): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
   getChildren(
-    element?: ThreadTitle | BoardTitle | AccountTitle | OnlineUser | undefined
-  ): ProviderResult<(ThreadTitle | BoardTitle | AccountTitle | OnlineUser)[]> {
+    element?: ThreadTitle | BoardTitle | undefined
+  ): ProviderResult<(ThreadTitle | BoardTitle)[]> {
     if (element && element instanceof BoardTitle) {
       return this.getForumEntries(element);
-    } else if (
-      element &&
-      (element instanceof ThreadTitle || element instanceof OnlineUser)
-    ) {
+    } else if (element && element instanceof ThreadTitle) {
       // ThreadTitle won't call getChildren as it's collapseState is set to None.
       // This condition block can be ignored.
       return [];
-    } else if (element && element instanceof AccountTitle) {
-      return Array.from(this.onlineUsers.keys()).map(
-        (user) =>
-          new OnlineUser(
-            user,
-            user === this.credential.username,
-            TreeItemCollapsibleState.None
-          )
-      );
     } else {
-      return checkAuth(this.cookieJar).then((auth) => {
-        return auth
-          ? this.getForumEntries().then((boardTitles) => {
-              const titles = [
-                ...boardTitles,
-                new AccountTitle(
-                  `OpenS1用户(${this.onlineUsers.size}人)`,
-                  TreeItemCollapsibleState.Collapsed
-                ),
-              ];
-              return titles;
-            })
-          : this.getForumEntries();
-      });
+      return this.getForumEntries();
     }
   }
 
@@ -116,10 +79,7 @@ export class ForumTitleProvider
       .map((i, el) => {
         const path: string = $(el).children("a").attr("href") || "#";
         const title: string = $(el).text().trim();
-        const conf =
-          workspace.getConfiguration("opens1").get<string[]>("hiddenBoards") ||
-          [];
-        if (path.includes("fid-") && !conf.includes(title)) {
+        if (path.includes("fid-")) {
           return new BoardTitle(
             title,
             path,
@@ -250,27 +210,4 @@ export class BoardTitle extends TreeItem {
 
   public page: number = 1;
   public readonly fid: number = Number(this.path.slice(4, -5));
-}
-
-export class AccountTitle extends TreeItem {
-  constructor(
-    public readonly title: string,
-    public readonly collapsibleState: TreeItemCollapsibleState
-  ) {
-    super(title, collapsibleState);
-  }
-
-  iconPath = new ThemeIcon("account");
-}
-
-export class OnlineUser extends TreeItem {
-  constructor(
-    public readonly username: string,
-    public readonly isMe: boolean,
-    public readonly collapsibleState: TreeItemCollapsibleState
-  ) {
-    super(isMe ? `${username}(Me)` : username, collapsibleState);
-  }
-
-  iconPath = new ThemeIcon("account");
 }

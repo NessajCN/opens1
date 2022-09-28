@@ -8,33 +8,27 @@ import { checkCredential, login } from "./libs/auth";
 import ThreadProvider from "./threads/ThreadProvider";
 import registerForum from "./libs/registerForum";
 import { socketIOInit } from "./libs/webrtc";
-import { Socket } from "socket.io-client";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   const credential: Credential = await checkCredential();
   const cookieJar: CookieJar = new CookieJar();
-  const onlineUsers: Map<string, string> = new Map();
-  const stage1stProvider = new ForumTitleProvider(
-    cookieJar,
-    onlineUsers,
-    credential
-  );
-  const socket: Socket = await socketIOInit(
-    stage1stProvider,
+  const onlineUsers = new Map();
+  const socket = await socketIOInit(
+    credential === GUEST ? null : credential.username,
     onlineUsers
   );
 
-  credential !== GUEST && (await login(credential, cookieJar, socket));
+  credential !== GUEST && (await login(credential, cookieJar));
 
+  const stage1stProvider = new ForumTitleProvider(cookieJar);
   const threadProvider = new ThreadProvider(cookieJar);
   registerForum(
     context.subscriptions,
     stage1stProvider,
     cookieJar,
-    threadProvider,
-    socket
+    threadProvider
   );
 }
 
