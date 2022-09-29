@@ -1,8 +1,8 @@
-import {
-  RTCPeerConnection,
-  RTCDataChannel,
-  RTCSessionDescription,
-} from "werift";
+// import {
+//   RTCPeerConnection,
+//   RTCDataChannel,
+//   RTCSessionDescription,
+// } from "werift";
 import { io } from "socket.io-client";
 import { ForumTitleProvider } from "../threads/ForumTitle";
 
