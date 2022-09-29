@@ -34,7 +34,7 @@ export class ForumTitleProvider
 
   constructor(
     private cookieJar: CookieJar,
-    private onlineUsers: Map<string, string>,
+    public onlineUsers: Map<string, string>,
     public credential: Credential
   ) {}
 

@@ -24,11 +24,13 @@ export const socketIOInit = async (
     userArray.forEach((user) => {
       onlineUsers.set(user[0], user[1]);
     });
+    forumProvider.onlineUsers = onlineUsers;
     forumProvider.accounts && forumProvider.updateView(forumProvider.accounts);
   });
 
   socket.on("userOffline", (user: string) => {
     onlineUsers.delete(user);
+    forumProvider.onlineUsers = onlineUsers;
   });
 
   return socket;
