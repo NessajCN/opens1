@@ -1,4 +1,10 @@
-import { window, commands, ExtensionContext, workspace } from "vscode";
+import {
+  window,
+  commands,
+  ExtensionContext,
+  workspace,
+  TextDocument,
+} from "vscode";
 import {
   ForumTitleProvider,
   BoardTitle,
@@ -21,7 +27,7 @@ const registerForum = (
   threadProvider: ThreadProvider,
   socket: Socket
 ) => {
-  let currentThread: ThreadTitle | null = null;
+  let currentThread: ThreadTitle | undefined;
   subscriptions.push(
     workspace.registerTextDocumentContentProvider("s1", threadProvider)
   );
@@ -50,13 +56,16 @@ const registerForum = (
     })
   );
   subscriptions.push(
-    commands.registerCommand("opens1.updateview", (board: BoardTitle | AccountTitle) => {
-      if(board instanceof BoardTitle) {
-        forumProvider.turnBoardPage(board, 1);
-      } else if (board instanceof AccountTitle) {
-        forumProvider.updateView(board);
+    commands.registerCommand(
+      "opens1.updateview",
+      (board: BoardTitle | AccountTitle) => {
+        if (board instanceof BoardTitle) {
+          forumProvider.turnBoardPage(board, 1);
+        } else if (board instanceof AccountTitle) {
+          forumProvider.updateView(board);
+        }
       }
-    })
+    )
   );
 
   subscriptions.push(

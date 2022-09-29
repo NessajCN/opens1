@@ -32,8 +32,8 @@ export const socketIOInit = async (forumProvider: ForumTitleProvider) => {
         onlineUsers.set(user[0], user[1]);
       });
       updateUser(onlineUsers, forumProvider.opens1Users);
-      forumProvider.refresh();
-      // forumProvider.accounts && forumProvider.updateView(forumProvider.accounts);
+      // forumProvider.refresh();
+      forumProvider.accounts && forumProvider.updateView(forumProvider.accounts);
 
     }
   });
@@ -42,8 +42,8 @@ export const socketIOInit = async (forumProvider: ForumTitleProvider) => {
     if (forumProvider.credential !== GUEST) {
       onlineUsers.delete(socketid);
       updateUser(onlineUsers, forumProvider.opens1Users);
-      // forumProvider.accounts && forumProvider.updateView(forumProvider.accounts);
-      forumProvider.refresh();
+      forumProvider.accounts && forumProvider.updateView(forumProvider.accounts);
+      // forumProvider.refresh();
     }
   });
 

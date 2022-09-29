@@ -29,7 +29,7 @@ export class ForumTitleProvider
     ThreadTitle | BoardTitle | AccountTitle | OnlineUser | undefined | void
   > = this._onDidChangeTreeData.event;
 
-  public accounts: AccountTitle | null = null;
+  public accounts: AccountTitle | undefined;
 
   constructor(private cookieJar: CookieJar, public credential: Credential) {}
 
@@ -79,7 +79,8 @@ export class ForumTitleProvider
         return auth
           ? this.getForumEntries().then((boardTitles) => {
               this.accounts = new AccountTitle(
-                `OpenS1用户(${this.opens1Users.size}人)`,
+                "OpenS1用户",
+                // `OpenS1用户(${this.opens1Users.size}人)`,
                 TreeItemCollapsibleState.Collapsed
               );
               const titles = [...boardTitles, this.accounts];
