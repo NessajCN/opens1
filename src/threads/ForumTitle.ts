@@ -165,7 +165,7 @@ export class ForumTitleProvider
           ? `threadpend`
           : `threadp${page}`;
       element.threadUri = Uri.parse(
-        `s1:${element.path.slice(4, -5)}-${page}.md`
+        `s1:${element.path.slice(4, -5)}-${page}.${element.ext}`
       );
       this.updateView(element);
     }
@@ -196,15 +196,29 @@ export class ThreadTitle extends TreeItem {
       arguments: [this],
       // arguments: [Uri.parse(`s1:${this.path}?page=${this.page}`)]
     };
-    // this.command = commands.executeCommand('open', Uri.parse(`${S1URL.host}${this.href}`));
   }
 
   public page: number = 1;
   public pagination: number =
     this.replies === 0 ? 1 : Math.ceil(this.replies / 30);
 
+  private displayStyle = workspace
+    .getConfiguration("opens1")
+    .get<string>("threadDisplayStyle");
+
+  public ext: string =
+    this.displayStyle === "markdown"
+      ? "md"
+      : this.displayStyle === "typescript"
+      ? "ts"
+      : this.displayStyle === "python"
+      ? "py"
+      : this.displayStyle === "cpp"
+      ? "cc"
+      : "md";
+
   public threadUri: Uri = Uri.parse(
-    `s1:${this.path.slice(4, -5)}-${this.page}.md`
+    `s1:${this.path.slice(4, -5)}-${this.page}.${this.ext}`
   );
 
   public readonly tid: number = Number(this.path.slice(4, -5));
@@ -228,24 +242,6 @@ export class BoardTitle extends TreeItem {
     // };
   }
 
-  // iconPath = {
-  //   light: filepath.join(
-  //     __filename,
-  //     "..",
-  //     "..",
-  //     "resources",
-  //     "light",
-  //     "comment-discussion.svg"
-  //   ),
-  //   dark: filepath.join(
-  //     __filename,
-  //     "..",
-  //     "..",
-  //     "resources",
-  //     "dark",
-  //     "comment-discussion.svg"
-  //   ),
-  // };
   iconPath = new ThemeIcon("comment-discussion");
 
   public page: number = 1;

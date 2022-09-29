@@ -2,6 +2,17 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.2.0 - 2022-9-29
+
+- Add thread content disguise for typescript/python/cpp.
+- Bug fix.
+
+
+## 0.1.3 - 2022-9-29
+
+- Fix display bugs.
+
+
 ## 0.1.2 - 2022-9-29
 
 - Bug fix for user display.

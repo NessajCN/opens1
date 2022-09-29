@@ -4,6 +4,7 @@ import {
   ExtensionContext,
   workspace,
   TextDocument,
+  Uri,
 } from "vscode";
 import {
   ForumTitleProvider,
@@ -19,6 +20,17 @@ import { replyPrompt, newpostPrompt } from "./prompt";
 import ThreadProvider from "../threads/ThreadProvider";
 import { Socket } from "socket.io-client";
 import { GUEST } from "../types/S1types";
+
+const showThread = async (uri: Uri) => {
+  const displayStyle = workspace
+    .getConfiguration("opens1")
+    .get<string>("threadDisplayStyle");
+  if (displayStyle === "markdown") {
+    await commands.executeCommand("markdown.showPreview", uri);
+  } else {
+    await window.showTextDocument(uri, { preview: true });
+  }
+};
 
 const registerForum = (
   subscriptions: ExtensionContext["subscriptions"],
@@ -106,11 +118,11 @@ const registerForum = (
           forumProvider.turnThreadPage(thread, thread.page + 1);
           threadProvider.refresh(thread.threadUri);
           currentThread = thread;
-          await commands.executeCommand(
-            "markdown.showPreview",
-            thread.threadUri
-          );
-          // await window.showTextDocument(thread.threadUri, { preview: true });
+          // await commands.executeCommand(
+          //   "markdown.showPreview",
+          //   thread.threadUri
+          // );
+          await showThread(thread.threadUri);
         }
       }
     )
@@ -126,11 +138,11 @@ const registerForum = (
           forumProvider.turnThreadPage(thread, thread.page - 1);
           // threadProvider.refresh(thread.threadUri);
           currentThread = thread;
-          await commands.executeCommand(
-            "markdown.showPreview",
-            thread.threadUri
-          );
-          // await window.showTextDocument(thread.threadUri, { preview: true });
+          // await commands.executeCommand(
+          //   "markdown.showPreview",
+          //   thread.threadUri
+          // );
+          await showThread(thread.threadUri);
         }
       }
     )
@@ -155,8 +167,8 @@ const registerForum = (
         forumProvider.turnThreadPage(thread, Number(page));
         // threadProvider.refresh(thread.threadUri);
         currentThread = thread;
-        await commands.executeCommand("markdown.showPreview", thread.threadUri);
-        // await window.showTextDocument(thread.threadUri, { preview: true });
+        // await commands.executeCommand("markdown.showPreview", thread.threadUri);
+        await showThread(thread.threadUri);
       }
     )
   );
@@ -230,8 +242,8 @@ const registerForum = (
         // const doc = await workspace.openTextDocument(uri);
         threadProvider.refresh(thread.threadUri);
         currentThread = thread;
-        await commands.executeCommand("markdown.showPreview", thread.threadUri);
-        // await window.showTextDocument(thread.threadUri, { preview: true });
+        // await commands.executeCommand("markdown.showPreview", thread.threadUri);
+        await showThread(thread.threadUri);
       }
     )
   );

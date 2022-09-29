@@ -13,7 +13,7 @@
     "email": "ksnessaj@hotmail.com",
     "url": "https://github.com/NessajCN"
   },
-  "version": "0.1.3",
+  "version": "0.2.0",
   "engines": {
     "vscode": "^1.71.0"
   },
@@ -33,11 +33,15 @@
           "default": "markdown",
           "enum": [
             "markdown",
-            "code"
+            "typescript",
+            "python",
+            "cpp"
           ],
           "enumDescriptions": [
             "Display thread contents in rendered markdown format.",
-            "Disguise thread contents as commented typescript block."
+            "Disguise thread contents as a documented typescript interface declaration.",
+            "Disguise thread contents as a documented python class definition.",
+            "Disguise thread contents as a documented c++ header."
           ],
           "description": "How you want your threads be displayed."
         },

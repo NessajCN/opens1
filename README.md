@@ -38,10 +38,10 @@ To be tested.
 
 The extension is in early Alpha version.
 
-## 0.1.2 - 2022-9-29
+## 0.2.0 - 2022-9-29
 
-- Bug fix for user display.
-
+- Add thread content disguise for typescript/python/cpp.
+- Bug fix.
 
 ## 0.1.0 - 2022-9-28
 

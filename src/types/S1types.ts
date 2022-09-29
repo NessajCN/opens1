@@ -30,7 +30,8 @@ export interface FormHash {
 export interface ThreadContent {
   author: string,
   posttime: string,
-  content: string
+  content: string,
+  fl: number
 }
 
 export interface Author {
