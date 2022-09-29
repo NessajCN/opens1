@@ -21,36 +21,69 @@ export class ForumTitleProvider
   > = new EventEmitter<ThreadTitle | BoardTitle | undefined | void>();
 
   readonly onDidChangeTreeData: Event<
-    ThreadTitle | BoardTitle | undefined | void
+    ThreadTitle | BoardTitle | AccountTitle | OnlineUser | undefined | void
   > = this._onDidChangeTreeData.event;
 
-  constructor(private cookieJar: CookieJar) {}
+  public accounts: AccountTitle | null = null;
+
+  constructor(
+    private cookieJar: CookieJar,
+    private onlineUsers: Map<string, string>,
+    public credential: Credential
+  ) {}
 
   refresh(): void {
     this._onDidChangeTreeData.fire();
   }
 
-  updateView(element: BoardTitle | ThreadTitle): void {
+  updateView(
+    element: BoardTitle | ThreadTitle | AccountTitle | OnlineUser
+  ): void {
     this._onDidChangeTreeData.fire(element);
   }
 
   getTreeItem(
-    element: ThreadTitle | BoardTitle
+    element: ThreadTitle | BoardTitle | AccountTitle | OnlineUser
   ): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
   getChildren(
-    element?: ThreadTitle | BoardTitle | undefined
-  ): ProviderResult<(ThreadTitle | BoardTitle)[]> {
+    element?: ThreadTitle | BoardTitle | AccountTitle | OnlineUser | undefined
+  ): ProviderResult<(ThreadTitle | BoardTitle | AccountTitle | OnlineUser)[]> {
     if (element && element instanceof BoardTitle) {
       return this.getForumEntries(element);
-    } else if (element && element instanceof ThreadTitle) {
+    } else if (
+      element &&
+      (element instanceof ThreadTitle || element instanceof OnlineUser)
+    ) {
       // ThreadTitle won't call getChildren as it's collapseState is set to None.
       // This condition block can be ignored.
       return [];
+    } else if (element && element instanceof AccountTitle) {
+      return Promise.resolve(
+        Array.from(this.onlineUsers.keys()).map(
+          (user) =>
+            new OnlineUser(
+              user,
+              user === this.credential.username,
+              TreeItemCollapsibleState.None
+            )
+        )
+      );
     } else {
-      return this.getForumEntries();
+      return checkAuth(this.cookieJar).then((auth) => {
+        return auth
+          ? this.getForumEntries().then((boardTitles) => {
+              this.accounts = new AccountTitle(
+                `OpenS1用户(${this.onlineUsers.size}人)`,
+                TreeItemCollapsibleState.Collapsed
+              );
+              const titles = [...boardTitles, this.accounts];
+              return titles;
+            })
+          : this.getForumEntries();
+      });
     }
   }
 
@@ -210,4 +243,29 @@ export class BoardTitle extends TreeItem {
 
   public page: number = 1;
   public readonly fid: number = Number(this.path.slice(4, -5));
+}
+
+export class AccountTitle extends TreeItem {
+  constructor(
+    public readonly title: string,
+    public readonly collapsibleState: TreeItemCollapsibleState
+  ) {
+    super(title, collapsibleState);
+    this.contextValue = `boarduser`;
+  }
+
+  iconPath = new ThemeIcon("account");
+}
+
+export class OnlineUser extends TreeItem {
+  constructor(
+    public readonly username: string,
+    public readonly isMe: boolean,
+    public readonly collapsibleState: TreeItemCollapsibleState
+  ) {
+    super(isMe ? `${username}(Me)` : username, collapsibleState);
+    this.contextValue = `onlineusers`;
+  }
+
+  iconPath = new ThemeIcon("account");
 }

@@ -3,6 +3,7 @@ import {
   ForumTitleProvider,
   BoardTitle,
   ThreadTitle,
+  AccountTitle,
 } from "../threads/ForumTitle";
 import { loginPrompt, logout, login } from "./auth";
 import { CookieJar } from "tough-cookie";
@@ -40,8 +41,12 @@ const registerForum = (
     })
   );
   subscriptions.push(
-    commands.registerCommand("opens1.updateview", (board: BoardTitle) => {
-      forumProvider.turnBoardPage(board, 1);
+    commands.registerCommand("opens1.updateview", (board: BoardTitle | AccountTitle) => {
+      if(board instanceof BoardTitle) {
+        forumProvider.turnBoardPage(board, 1);
+      } else if (board instanceof AccountTitle) {
+        forumProvider.updateView(board);
+      }
     })
   );
   subscriptions.push(
