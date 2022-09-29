@@ -41,50 +41,50 @@ export default class ThreadProvider implements TextDocumentContentProvider {
     threadContents: ThreadContent[],
     subject: string
   ): string {
-    let md: string = `interface Thread {\n  /**\n   * ${subject}\n   */\n  subject: string,`;
+    let ts: string = `interface Thread {\n  /**\n   * ${subject}\n   */\n  subject: string,`;
     for (const content of threadContents) {
-      md += `\n\n  /**\n   * @${content.author}\n   * 发表于 ${content.posttime}\n   */\n  `;
-      md += `author${content.fl + 1}: string,\n  /**\n   `;
-      md += `* ${content.content
+      ts += `\n\n  /**\n   * @${content.author}\n   * 发表于 ${content.posttime}\n   */\n  `;
+      ts += `author${content.fl + 1}: string,\n  /**\n   `;
+      ts += `* ${content.content
         .replace(/(\n)+/g, "\n   * ")
         .replace(/&#x([0-9A-F]{1,4});/g, (_, unicode) =>
           String.fromCharCode(Number(`0x${unicode}`))
         )}\n   */\n  `;
-      md += `fl${content.fl + 1}: number,`;
+      ts += `fl${content.fl + 1}: number,`;
     }
-    md += `\n}`;
-    return md;
+    ts += `\n}`;
+    return ts;
   }
 
   private toPython(threadContents: ThreadContent[], subject: string): string {
-    let md: string = `class Thread:\n  def subject():\n    # ${subject}\n    return`;
+    let py: string = `class Thread:\n  def subject():\n    # ${subject}\n    return`;
     for (const content of threadContents) {
-      md += `\n\n  def author${content.fl + 1}():\n    # ${content.author}\n    # 发表于 ${content.posttime}\n    return`;
-      md += `\n  def fl${content.fl + 1}():\n`;
-      md += `    """${content.content
+      py += `\n\n  def author${content.fl + 1}():\n    # ${content.author}\n    # 发表于 ${content.posttime}\n    return`;
+      py += `\n  def fl${content.fl + 1}():\n`;
+      py += `    """${content.content
         .replace(/(\n)+/g, "\n    ")
         .replace(/&#x([0-9A-F]{1,4});/g, (_, unicode) =>
           String.fromCharCode(Number(`0x${unicode}`))
         )}\n    """\n    return`;
     }
-    return md;
+    return py;
   }
 
   private toCpp(threadContents: ThreadContent[], subject: string): string {
-    let md: string = `namespace Thread {\n  /**\n   * ${subject}\n   */\n  `;
-    md += `std::string subject;`;
+    let cc: string = `namespace Thread {\n  /**\n   * ${subject}\n   */\n  `;
+    cc += `std::string subject;`;
     for (const content of threadContents) {
-      md += `\n\n  /**\n   * @${content.author}\n   * 发表于 ${content.posttime}\n   */\n  `;
-      md += `std::string author${content.fl + 1};\n  /**\n   `;
-      md += `* ${content.content
+      cc += `\n\n  /**\n   * @${content.author}\n   * 发表于 ${content.posttime}\n   */\n  `;
+      cc += `std::string author${content.fl + 1};\n  /**\n   `;
+      cc += `* ${content.content
         .replace(/(\n)+/g, "\n   * ")
         .replace(/&#x([0-9A-F]{1,4});/g, (_, unicode) =>
           String.fromCharCode(Number(`0x${unicode}`))
         )}\n   */\n  `;
-      md += `int fl${content.fl + 1};`;
+      cc += `int fl${content.fl + 1};`;
     }
-    md += `\n}`;
-    return md;
+    cc += `\n}`;
+    return cc;
   }
 
   private getAuthors(doc: string) {
@@ -150,7 +150,7 @@ export default class ThreadProvider implements TextDocumentContentProvider {
     });
     // console.log($("#content").html());
     // console.log(posts);
-    const parsedContent: string =
+    const renderedContent: string =
       ext === "md"
         ? this.toMarkdown(threadContents, subject)
         : ext === "ts"
@@ -160,6 +160,6 @@ export default class ThreadProvider implements TextDocumentContentProvider {
         : ext === "cc"
         ? this.toCpp(threadContents, subject)
         : this.toMarkdown(threadContents, subject);
-    return parsedContent;
+    return renderedContent;
   }
 }
