@@ -29,9 +29,7 @@ export default class ThreadProvider implements TextDocumentContentProvider {
       md += `> **${content.author}** 发表于 ${content.posttime}\n\n`;
       md += `${content.content
         .replace(/(\n)+/g, "\n\n")
-        .replace(/&#x([0-9A-F]{1,4});/g, (_, unicode) =>
-          String.fromCharCode(Number(`0x${unicode}`))
-        )}\n\n`;
+        }\n\n`;
       md += `----\n\n`;
     }
     return md;
@@ -47,9 +45,7 @@ export default class ThreadProvider implements TextDocumentContentProvider {
       ts += `author${content.fl + 1}: string,\n  /**\n   `;
       ts += `* ${content.content
         .replace(/(\n)+/g, "\n   * ")
-        .replace(/&#x([0-9A-F]{1,4});/g, (_, unicode) =>
-          String.fromCharCode(Number(`0x${unicode}`))
-        )}\n   */\n  `;
+        }\n   */\n  `;
       ts += `fl${content.fl + 1}: number,`;
     }
     ts += `\n}`;
@@ -59,13 +55,13 @@ export default class ThreadProvider implements TextDocumentContentProvider {
   private toPython(threadContents: ThreadContent[], subject: string): string {
     let py: string = `class Thread:\n  def subject():\n    # ${subject}\n    return`;
     for (const content of threadContents) {
-      py += `\n\n  def author${content.fl + 1}():\n    # ${content.author}\n    # 发表于 ${content.posttime}\n    return`;
+      py += `\n\n  def author${content.fl + 1}():\n    # ${
+        content.author
+      }\n    # 发表于 ${content.posttime}\n    return`;
       py += `\n  def fl${content.fl + 1}():\n`;
       py += `    """${content.content
         .replace(/(\n)+/g, "\n    ")
-        .replace(/&#x([0-9A-F]{1,4});/g, (_, unicode) =>
-          String.fromCharCode(Number(`0x${unicode}`))
-        )}\n    """\n    return`;
+        }\n    """\n    return`;
     }
     return py;
   }
@@ -78,9 +74,7 @@ export default class ThreadProvider implements TextDocumentContentProvider {
       cc += `std::string author${content.fl + 1};\n  /**\n   `;
       cc += `* ${content.content
         .replace(/(\n)+/g, "\n   * ")
-        .replace(/&#x([0-9A-F]{1,4});/g, (_, unicode) =>
-          String.fromCharCode(Number(`0x${unicode}`))
-        )}\n   */\n  `;
+        }\n   */\n  `;
       cc += `int fl${content.fl + 1};`;
     }
     cc += `\n}`;
@@ -120,6 +114,9 @@ export default class ThreadProvider implements TextDocumentContentProvider {
           .replace(/<br>/g, "\n")
           // .replace(/&#x.+?;/g, (hex)=> `&#${Number(`0x${hex.match(/&#x(.+?);/)[1]}`)};`)
           .replace(/&amp;#/g, "&#")
+          .replace(/&#x([0-9A-F]{1,4});/g, (_, unicode) =>
+            String.fromCharCode(Number(`0x${unicode}`))
+          )
       );
     // $("#content p.author").remove();
     // const posts = $("#content").map((i,el)=>$(el).text().trim()).toArray();
