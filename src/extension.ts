@@ -15,16 +15,8 @@ import { Socket } from "socket.io-client";
 export async function activate(context: vscode.ExtensionContext) {
   const credential: Credential = await checkCredential();
   const cookieJar: CookieJar = new CookieJar();
-  const onlineUsers: Map<string, string> = new Map();
-  const stage1stProvider = new ForumTitleProvider(
-    cookieJar,
-    onlineUsers,
-    credential
-  );
-  const socket: Socket = await socketIOInit(
-    stage1stProvider,
-    onlineUsers
-  );
+  const stage1stProvider = new ForumTitleProvider(cookieJar, credential);
+  const socket: Socket = await socketIOInit(stage1stProvider);
 
   credential !== GUEST && (await login(credential, cookieJar, socket));
 

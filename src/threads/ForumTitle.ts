@@ -13,7 +13,6 @@ import { Credential, S1URL } from "../types/S1types";
 import * as cheerio from "cheerio";
 import got from "got";
 import { CookieJar } from "tough-cookie";
-import { Socket } from "socket.io-client";
 import { checkAuth } from "../libs/auth";
 
 export class ForumTitleProvider
@@ -32,11 +31,9 @@ export class ForumTitleProvider
 
   public accounts: AccountTitle | null = null;
 
-  constructor(
-    private cookieJar: CookieJar,
-    public onlineUsers: Map<string, string>,
-    public credential: Credential
-  ) {}
+  constructor(private cookieJar: CookieJar, public credential: Credential) {}
+
+  public opens1Users: Set<string> = new Set();
 
   refresh(): void {
     this._onDidChangeTreeData.fire();
@@ -68,7 +65,7 @@ export class ForumTitleProvider
       return [];
     } else if (element && element instanceof AccountTitle) {
       return Promise.resolve(
-        Array.from(this.onlineUsers.keys()).map(
+        Array.from(this.opens1Users.keys()).map(
           (user) =>
             new OnlineUser(
               user,
@@ -82,7 +79,7 @@ export class ForumTitleProvider
         return auth
           ? this.getForumEntries().then((boardTitles) => {
               this.accounts = new AccountTitle(
-                `OpenS1用户(${this.onlineUsers.size}人)`,
+                `OpenS1用户(${this.opens1Users.size}人)`,
                 TreeItemCollapsibleState.Collapsed
               );
               const titles = [...boardTitles, this.accounts];
