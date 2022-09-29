@@ -2,6 +2,10 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.2.1 - 2022-9-29
+
+- Markdown style bug fix.
+
 ## 0.2.0 - 2022-9-29
 
 - Add thread content disguise for typescript/python/cpp.

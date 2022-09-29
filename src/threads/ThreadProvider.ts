@@ -28,7 +28,7 @@ export default class ThreadProvider implements TextDocumentContentProvider {
     for (const content of threadContents) {
       md += `> **${content.author}** 发表于 ${content.posttime}\n\n`;
       md += `${content.content
-        .replace(/(\n)+/g, "\n   * ")
+        .replace(/(\n)+/g, "\n\n")
         .replace(/&#x([0-9A-F]{1,4});/g, (_, unicode) =>
           String.fromCharCode(Number(`0x${unicode}`))
         )}\n\n`;

@@ -38,6 +38,10 @@ To be tested.
 
 The extension is in early Alpha version.
 
+## 0.2.1 - 2022-9-29
+
+- Markdown style bug fix.
+
 ## 0.2.0 - 2022-9-29
 
 - Add thread content disguise for typescript/python/cpp.
