@@ -38,10 +38,24 @@ To be tested.
 
 The extension is in early Alpha version.
 
-### 0.0.4
+## 0.1.1 - 2022-9-29
 
-- Fix unicode display error.
-- Add menu button for turning thread page.
+- Bug fix for user display.
+
+
+## 0.1.0 - 2022-9-28
+
+- Major update.
+- Add keybindings for turning thread page. (Contributed by [iriyano](https://github.com/aaeviru) )
+- Add display of all OpenS1 user.
+- Add boards filtering.
+- Bug fix.
+
+## Features incoming
+
+- Direct messaging between OpenS1 users.
+- Group chatting among OpenS1 users.
+- File sharing with other OpenS1 users.
 
 ---
 
@@ -63,6 +77,8 @@ The extension is in early Alpha version.
 
  - Both new posts and replies can be edited in vscode's built-in editor. 
  Just create and save a file with a '.s1' ext name to be picked in the quickpick bar.
+
+ - Click '->' or '<-' arrow key to turn pages when viewing threads.
 
 ----
 

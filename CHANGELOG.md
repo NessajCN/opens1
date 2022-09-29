@@ -2,6 +2,19 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.1.1 - 2022-9-29
+
+- Bug fix for user display.
+
+
+## 0.1.0 - 2022-9-28
+
+- Major update.
+- Add keybindings for turning thread page. (Contributed by [iriyano](https://github.com/aaeviru) )
+- Add display of all OpenS1 user.
+- Add boards filtering.
+- Bug fix.
+
 
 ## 0.0.4 - 2022-9-27
 
