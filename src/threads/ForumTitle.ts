@@ -30,6 +30,8 @@ export class ForumTitleProvider
     ThreadTitle | BoardTitle | AccountTitle | OnlineUser | undefined | void
   > = this._onDidChangeTreeData.event;
 
+  public accounts: AccountTitle | null = null;
+
   constructor(
     private cookieJar: CookieJar,
     private onlineUsers: Map<string, string>,
@@ -65,25 +67,25 @@ export class ForumTitleProvider
       // This condition block can be ignored.
       return [];
     } else if (element && element instanceof AccountTitle) {
-      return Array.from(this.onlineUsers.keys()).map(
-        (user) =>
-          new OnlineUser(
-            user,
-            user === this.credential.username,
-            TreeItemCollapsibleState.None
-          )
+      return Promise.resolve(
+        Array.from(this.onlineUsers.keys()).map(
+          (user) =>
+            new OnlineUser(
+              user,
+              user === this.credential.username,
+              TreeItemCollapsibleState.None
+            )
+        )
       );
     } else {
       return checkAuth(this.cookieJar).then((auth) => {
         return auth
           ? this.getForumEntries().then((boardTitles) => {
-              const titles = [
-                ...boardTitles,
-                new AccountTitle(
-                  `OpenS1用户(${this.onlineUsers.size}人)`,
-                  TreeItemCollapsibleState.Collapsed
-                ),
-              ];
+              this.accounts = new AccountTitle(
+                `OpenS1用户(${this.onlineUsers.size}人)`,
+                TreeItemCollapsibleState.Collapsed
+              );
+              const titles = [...boardTitles, this.accounts];
               return titles;
             })
           : this.getForumEntries();
@@ -258,6 +260,7 @@ export class AccountTitle extends TreeItem {
     public readonly collapsibleState: TreeItemCollapsibleState
   ) {
     super(title, collapsibleState);
+    this.contextValue = `boarduser`;
   }
 
   iconPath = new ThemeIcon("account");
@@ -270,6 +273,7 @@ export class OnlineUser extends TreeItem {
     public readonly collapsibleState: TreeItemCollapsibleState
   ) {
     super(isMe ? `${username}(Me)` : username, collapsibleState);
+    this.contextValue = `onlineusers`;
   }
 
   iconPath = new ThemeIcon("account");

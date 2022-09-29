@@ -24,6 +24,7 @@ export const socketIOInit = async (
     userArray.forEach((user) => {
       onlineUsers.set(user[0], user[1]);
     });
+    forumProvider.accounts && forumProvider.updateView(forumProvider.accounts);
   });
 
   socket.on("userOffline", (user: string) => {
