@@ -15,7 +15,7 @@
   },
   "version": "0.2.1",
   "engines": {
-    "vscode": "^1.71.0"
+    "vscode": "^1.70.0"
   },
   "categories": [
     "Other"
@@ -56,69 +56,83 @@
       {
         "command": "opens1.configure",
         "title": "Change OpenS1 settings",
+        "category": "S1",
         "icon": "$(settings-gear)"
       },
       {
         "command": "opens1.refresh",
         "title": "Refresh New Threads",
+        "category": "S1",
         "icon": "$(refresh)"
       },
       {
         "command": "opens1.updateview",
         "title": "Update view",
+        "category": "S1",
         "icon": "$(refresh)"
       },
       {
         "command": "opens1.hideboard",
-        "title": "Hide this board"
+        "title": "Hide this board",
+        "category": "S1"
       },
       {
         "command": "opens1.signin",
         "title": "Sign in S1",
+        "category": "S1",
         "icon": "$(sign-in)"
       },
       {
         "command": "opens1.signout",
         "title": "Sign out",
+        "category": "S1",
         "icon": "$(sign-out)"
       },
       {
         "command": "opens1.showthread",
-        "title": "Show Thread"
+        "title": "Show Thread",
+        "category": "S1"
       },
       {
         "command": "opens1.nextboardpage",
         "title": "Next Board Page",
+        "category": "S1",
         "icon": "$(triangle-right)"
       },
       {
         "command": "opens1.lastboardpage",
         "title": "Last Board Page",
+        "category": "S1",
         "icon": "$(triangle-left)"
       },
       {
         "command": "opens1.nextthreadpage",
         "title": "Next Thread Page",
+        "category": "S1",
         "icon": "$(arrow-small-right)"
       },
       {
         "command": "opens1.lastthreadpage",
         "title": "Last Thread Page",
+        "category": "S1",
         "icon": "$(arrow-small-left)"
       },
       {
         "command": "opens1.newpost",
         "title": "New post",
+        "category": "S1",
         "icon": "$(add)"
       },
       {
         "command": "opens1.reply",
         "title": "Reply",
+        "category": "S1",
         "icon": "$(comment)"
       },
       {
         "command": "opens1.turntopage",
         "title": "Turn to page",
+        "category": "S1",
         "icon": "$(arrow-small-left)"
       }
     ],
@@ -226,7 +240,7 @@
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.7.18",
     "@types/tough-cookie": "^4.0.2",
-    "@types/vscode": "^1.71.0",
+    "@types/vscode": "^1.70.0",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
     "@vscode/test-electron": "^2.1.5",

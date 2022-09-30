@@ -82,8 +82,9 @@ The extension is in early Alpha version.
  - Both new posts and replies can be edited in vscode's built-in editor. 
  Just create and save a file with a '.s1' ext name to be picked in the quickpick bar.
 
- - Click '->' or '<-' arrow key to turn pages when viewing threads.
+ - Click '->' or '<-' arrow key to turn pages when viewing threads in Markdown mode.
 
+ - Disguise thread contents with Typescript/Python/Cpp coding style. (Other language styles are to be added.)
 ----
 
 **Enjoy!**

@@ -62,6 +62,14 @@ export interface LoginForm {
   cookietime: number;
 }
 
+export interface Member {
+  username: string,
+  uid? : number,
+  readperm? : number,
+  currency? : number,
+  geese? : number
+}
+
 /**
  * New thread form body of POST request to {@linkcode S1URL.newPostPath}
  */
@@ -130,14 +138,35 @@ export interface NewPostForm {
     wysiwyg: string,
     /**
      * Opionals to determine whether notifying the author.
+     * Noticeauthor is an encoded string to noticed replier
+     * who received a notification on main forum menu.
      */
      noticeauthor?: string,
+     /**
+      * Trimmed quoted reply content like:
+      * "[quote][size=2][url=forum.php?mod=redirect&goto=findpost&pid=57656505&ptid=2096733]
+      * [color=#999999]nessaj+发表于+2022-9-26+14:30[/color][/url][/size]\r\nReplyContent[/quote]"
+      * 
+      * pid is the same as reppid standing for the number of the reply content.
+      * ptid is the thread tid of the main thread.
+      */
      noticetrimstr?: string,
+     /**
+      * Message to noticed author. usually the quoted reply text like "ReplyContent" above.
+      */
      noticeauthormsg?: string,
     /**
      * Subject of the reply.
      */
     subject?: string,
+    /**
+     * Reply pid same as pid above. 
+     */
+    reppid?: string,
+    /**
+     * Reply pid same as pid above. 
+     */
+     reppost?: string,
     /**
      * Content body of the reply.
      */
