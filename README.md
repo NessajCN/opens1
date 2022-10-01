@@ -38,6 +38,11 @@ To be tested.
 
 The extension is in early Alpha version.
 
+## 0.3.1 - 2022-10-1
+
+- Bug fix of displaying posts and replies.
+
+
 
 ## 0.3.0 - 2022-10-1
 

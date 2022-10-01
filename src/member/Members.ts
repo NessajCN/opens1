@@ -96,11 +96,10 @@ export class MemberInfo implements Member {
         }
       }
     });
+    console.log($("#ct .u_profile .bbda :not(#pbbs) li").html());
     $("#ct .u_profile .bbda :not(#pbbs) li").each((i, el) => {
-      if (i === 3) {
+      if ($(el).children().text().includes("回帖数")) {
         $(el).children().each((j,ele)=>{
-          console.log(j);
-          console.log($(ele).html());
           switch(j) {
             case 1: {
               this.friends = Number($(ele).text().trim().split(" ")[1]);

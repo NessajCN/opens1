@@ -2,6 +2,11 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.3.1 - 2022-10-1
+
+- Bug fix of displaying posts and replies.
+
+
 ## 0.3.0 - 2022-10-1
 
 - Add member info display on mouse hover for disguised display style.
