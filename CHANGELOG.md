@@ -2,6 +2,10 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.3.0 - 2022-10-1
+
+- Add member info display on mouse hover for disguised display style.
+
 ## 0.2.1 - 2022-9-29
 
 - Markdown style bug fix.

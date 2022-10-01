@@ -67,7 +67,15 @@ export interface Member {
   uid? : number,
   readperm? : number,
   currency? : number,
-  geese? : number
+  geese? : number,
+  friends? : number,
+  posts? : number,
+  replies? : number,
+  totalonline?: number,
+  lastvisited?: string,
+  registeredAt?: string,
+  score?: number,
+  level?: string
 }
 
 /**

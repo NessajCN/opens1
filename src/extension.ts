@@ -9,6 +9,7 @@ import ThreadProvider from "./threads/ThreadProvider";
 import registerForum from "./libs/registerForum";
 import { socketIOInit } from "./libs/webrtc";
 import { Socket } from "socket.io-client";
+import { MemberInfoProvider } from "./member/Members";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -21,11 +22,13 @@ export async function activate(context: vscode.ExtensionContext) {
   credential !== GUEST && (await login(credential, cookieJar, socket));
 
   const threadProvider = new ThreadProvider(cookieJar);
+  const memberInfoProvider = new MemberInfoProvider(cookieJar);
   registerForum(
     context.subscriptions,
     stage1stProvider,
     cookieJar,
     threadProvider,
+    memberInfoProvider,
     socket
   );
 }

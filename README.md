@@ -38,22 +38,12 @@ To be tested.
 
 The extension is in early Alpha version.
 
-## 0.2.1 - 2022-9-29
 
-- Markdown style bug fix.
+## 0.3.0 - 2022-10-1
 
-## 0.2.0 - 2022-9-29
+- Add member info display on mouse hover for disguised display style.
 
-- Add thread content disguise for typescript/python/cpp.
-- Bug fix.
 
-## 0.1.0 - 2022-9-28
-
-- Major update.
-- Add keybindings for turning thread page. (Contributed by [iriyano](https://github.com/aaeviru) )
-- Add display of all OpenS1 user.
-- Add boards filtering.
-- Bug fix.
 
 ## Features incoming
 

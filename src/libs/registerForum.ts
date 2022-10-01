@@ -5,6 +5,7 @@ import {
   workspace,
   TextDocument,
   Uri,
+  languages,
 } from "vscode";
 import {
   ForumTitleProvider,
@@ -20,6 +21,7 @@ import { replyPrompt, newpostPrompt } from "./prompt";
 import ThreadProvider from "../threads/ThreadProvider";
 import { Socket } from "socket.io-client";
 import { GUEST } from "../types/S1types";
+import { MemberInfoProvider } from "../member/Members";
 
 const showThread = async (uri: Uri) => {
   const displayStyle = workspace
@@ -37,9 +39,19 @@ const registerForum = (
   forumProvider: ForumTitleProvider,
   cookieJar: CookieJar,
   threadProvider: ThreadProvider,
+  memberInfoProvider: MemberInfoProvider,
   socket: Socket
 ) => {
   let currentThread: ThreadTitle | undefined;
+
+  const displayStyle = workspace
+    .getConfiguration("opens1")
+    .get<string>("threadDisplayStyle");
+
+  subscriptions.push(
+    // languages.registerHoverProvider({ language: "typescript" }, memberInfoProvider)
+    languages.registerHoverProvider({ scheme: "s1" }, memberInfoProvider)
+  );
   subscriptions.push(
     workspace.registerTextDocumentContentProvider("s1", threadProvider)
   );
