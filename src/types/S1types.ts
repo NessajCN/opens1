@@ -27,18 +27,18 @@ export interface FormHash {
   formhash: string | null
 }
 
-export interface ThreadContent {
-  author: string,
-  posttime: string,
-  content: string,
-  fl: number
-}
+// export interface ThreadContent {
+//   author: string,
+//   posttime: string,
+//   content: string,
+//   fl: number
+// }
 
-export interface Author {
-  fl: number,
-  author: string,
-  posttime: string
-}
+// export interface Author {
+//   fl: number,
+//   author: string,
+//   posttime: string
+// }
 /**
  * form body of POST request to {@linkcode S1URL.loginPath} for signin.
  */
@@ -60,6 +60,19 @@ export interface LoginForm {
    * Default 2592000
    */
   cookietime: number;
+}
+
+export interface PostContent {
+  pid: string,
+  author: string,
+  message: string,
+  num: string,
+  posttime: string
+}
+
+export interface Post {
+  subject: string,
+  contents: PostContent[]
 }
 
 export interface Member {

@@ -5,7 +5,6 @@ import { CookieJar } from "tough-cookie";
 import {
   HoverProvider,
   Hover,
-  languages,
   Range,
   Position,
   ProviderResult,
@@ -46,8 +45,8 @@ export class MemberInfoProvider implements HoverProvider {
     } else {
       await memberInfo.getMemberInfo();
       const memberMarkdownString = new MarkdownString(
-        `**${memberInfo.username}** ( UID: ${memberInfo.uid} )\n\n----\n\n主题数: ${memberInfo.posts} ； 回帖数: ${memberInfo.replies} \n\n鹅: ${memberInfo.geese} ； 死鱼: ${memberInfo.currency} ； 用户组: ${memberInfo.level}
-        \n在线时长: ${memberInfo.totalonline} ； 注册日期: ${memberInfo.registeredAt}`
+        `**${memberInfo.username}** ( UID: ${memberInfo.uid} )\n\n----\n\n - 主题数: ${memberInfo.posts} , 回帖数: ${memberInfo.replies} \n\n - 鹅: ${memberInfo.geese} , 死鱼: ${memberInfo.currency} , 用户组: ${memberInfo.level}
+        \n - 在线时长: ${memberInfo.totalonline} 小时 , 注册日期: ${memberInfo.registeredAt}`
       );
       return hoverRange
         ? new Hover(memberMarkdownString, hoverRange)
@@ -96,7 +95,6 @@ export class MemberInfo implements Member {
         }
       }
     });
-    console.log($("#ct .u_profile .bbda :not(#pbbs) li").html());
     $("#ct .u_profile .bbda :not(#pbbs) li").each((i, el) => {
       if ($(el).children().text().includes("回帖数")) {
         $(el).children().each((j,ele)=>{

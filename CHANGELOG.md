@@ -2,6 +2,12 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.3.2 - 2022-10-1
+
+- Optimize disguised thread style.
+
+- Change the thread content provider from archiver to normal forum.
+
 ## 0.3.1 - 2022-10-1
 
 - Bug fix of displaying posts and replies.

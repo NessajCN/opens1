@@ -18,11 +18,15 @@ Addtional features could be added in future releases. (or not ...)
 If you are a Linux user, you may have to install some dependency to use `keytar`.
 e.g in Ubuntu:
 ```
-sudo apt install gnome-keyring
+sudo apt install libsecret-1-dev
 ```
-or Centos:
+in RedHat distros:
 ```
-sudo yum install gnome-keyring-devel
+sudo yum install libsecret-devel
+```
+in Arch Linux:
+```
+sudo pacman -S libsecret
 ```
 
 
@@ -37,6 +41,12 @@ To be tested.
 ## Release Notes
 
 The extension is in early Alpha version.
+
+## 0.3.1 - 2022-10-1
+
+- Optimize disguised thread style.
+
+- Change the thread content provider from archiver to normal forum.
 
 ## 0.3.1 - 2022-10-1
 
