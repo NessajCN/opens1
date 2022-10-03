@@ -50,8 +50,8 @@ const registerForum = (
 
   const getThread = (thread?: ThreadTitle | undefined) => {
     if (!thread && currentThread) {
-      if( !window.tabGroups.activeTabGroup.activeTab || (window.activeTextEditor && currentThread?.threadUri.toString() != window.activeTextEditor.document.uri.toString()))
-        currentThread = undefined;
+      if (!window.tabGroups.activeTabGroup.activeTab || (window.activeTextEditor && currentThread?.threadUri.toString() != window.activeTextEditor.document.uri.toString()))
+        return undefined;
       return currentThread;
     } else {
       return thread;
@@ -133,7 +133,7 @@ const registerForum = (
     commands.registerCommand(
       "opens1.nextthreadpage",
       async (thread?: ThreadTitle | undefined) => {
-        thread = getThread(thread );
+        thread = getThread(thread);
         if (thread) {
           forumProvider.turnThreadPage(thread, thread.page + 1);
           threadProvider.refresh(thread.threadUri);
@@ -151,7 +151,7 @@ const registerForum = (
     commands.registerCommand(
       "opens1.lastthreadpage",
       async (thread?: ThreadTitle | undefined) => {
-        thread = getThread(thread );
+        thread = getThread(thread);
         if (thread) {
           forumProvider.turnThreadPage(thread, thread.page - 1);
           // threadProvider.refresh(thread.threadUri);
@@ -169,7 +169,7 @@ const registerForum = (
     commands.registerCommand(
       "opens1.latestthreadpage",
       async (thread?: ThreadTitle | undefined) => {
-        thread = getThread(thread );
+        thread = getThread(thread);
         if (thread) {
           forumProvider.turnThreadPage(thread, thread.pagination);
           currentThread = thread;
@@ -182,7 +182,7 @@ const registerForum = (
     commands.registerCommand(
       "opens1.turntopage",
       async (thread?: ThreadTitle | undefined) => {
-        thread = getThread(thread );
+        thread = getThread(thread);
         if (thread) {
           const page = await window.showInputBox({
             title: "跳转页码",
@@ -237,7 +237,7 @@ const registerForum = (
       if (!replytext) {
         return;
       } else {
-        thread = getThread(thread );
+        thread = getThread(thread);
         if (thread) {
           const response = await submitReply(
             thread.tid,
