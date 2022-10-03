@@ -140,12 +140,17 @@
       {
         "command": "opens1.nextthreadpage",
         "key": "right",
-        "when": "!inputFocus"
+        "when": "!inputFocus || editorReadonly"
       },
       {
         "command": "opens1.lastthreadpage",
         "key": "left",
-        "when": "!inputFocus"
+        "when": "!inputFocus || editorReadonly"
+      },
+      {
+        "command": "opens1.latestthreadpage",
+        "key": "ctrl+right",
+        "when": "!inputFocus || editorReadonly"
       }
     ],
     "menus": {
