@@ -3,7 +3,6 @@ import {
   commands,
   ExtensionContext,
   workspace,
-  TextDocument,
   Uri,
   languages,
 } from "vscode";
@@ -44,22 +43,27 @@ const registerForum = (
 ) => {
   let currentThread: ThreadTitle | undefined;
 
-  const displayStyle = workspace
-    .getConfiguration("opens1")
-    .get<string>("threadDisplayStyle");
+  // const displayStyle = workspace
+  //   .getConfiguration("opens1")
+  //   .get<string>("threadDisplayStyle");
 
   const getThread = (thread?: ThreadTitle | undefined) => {
     if (!thread && currentThread) {
-      if (!window.tabGroups.activeTabGroup.activeTab || (window.activeTextEditor && currentThread?.threadUri.toString() != window.activeTextEditor.document.uri.toString()))
+      if (
+        !window.tabGroups.activeTabGroup.activeTab ||
+        (window.activeTextEditor &&
+          currentThread?.threadUri.toString() !==
+            window.activeTextEditor.document.uri.toString())
+      ) {
         return undefined;
+      }
       return currentThread;
     } else {
       return thread;
     }
-  }
+  };
 
   subscriptions.push(
-    // languages.registerHoverProvider({ language: "typescript" }, memberInfoProvider)
     languages.registerHoverProvider({ scheme: "s1" }, memberInfoProvider)
   );
   subscriptions.push(
@@ -138,10 +142,6 @@ const registerForum = (
           forumProvider.turnThreadPage(thread, thread.page + 1);
           threadProvider.refresh(thread.threadUri);
           currentThread = thread;
-          // await commands.executeCommand(
-          //   "markdown.showPreview",
-          //   thread.threadUri
-          // );
           await showThread(thread.threadUri);
         }
       }
@@ -154,12 +154,7 @@ const registerForum = (
         thread = getThread(thread);
         if (thread) {
           forumProvider.turnThreadPage(thread, thread.page - 1);
-          // threadProvider.refresh(thread.threadUri);
           currentThread = thread;
-          // await commands.executeCommand(
-          //   "markdown.showPreview",
-          //   thread.threadUri
-          // );
           await showThread(thread.threadUri);
         }
       }
@@ -198,9 +193,7 @@ const registerForum = (
             return;
           }
           forumProvider.turnThreadPage(thread, Number(page));
-          // threadProvider.refresh(thread.threadUri);
           currentThread = thread;
-          // await commands.executeCommand("markdown.showPreview", thread.threadUri);
           await showThread(thread.threadUri);
         }
       }
@@ -232,26 +225,28 @@ const registerForum = (
   );
 
   subscriptions.push(
-    commands.registerCommand("opens1.reply", async (thread?: ThreadTitle | undefined) => {
-      const replytext = await replyPrompt();
-      if (!replytext) {
-        return;
-      } else {
-        thread = getThread(thread);
-        if (thread) {
-          const response = await submitReply(
-            thread.tid,
-            thread.fid,
-            replytext,
-            cookieJar
-          );
-          // console.log(response);
-          forumProvider.turnThreadPage(thread, thread.pagination);
-          threadProvider.refresh(thread.threadUri);
-          window.showInformationMessage("Reply submitted.");
+    commands.registerCommand(
+      "opens1.reply",
+      async (thread?: ThreadTitle | undefined) => {
+        const replytext = await replyPrompt();
+        if (!replytext) {
+          return;
+        } else {
+          thread = getThread(thread);
+          if (thread) {
+            const response = await submitReply(
+              thread.tid,
+              thread.fid,
+              replytext,
+              cookieJar
+            );
+            forumProvider.turnThreadPage(thread, thread.pagination);
+            threadProvider.refresh(thread.threadUri);
+            window.showInformationMessage("Reply submitted.");
+          }
         }
       }
-    })
+    )
   );
 
   subscriptions.push(
@@ -261,7 +256,6 @@ const registerForum = (
         return;
       } else {
         const response = await submitNewPost(board.fid, newpost, cookieJar);
-        // console.log(response);
         forumProvider.updateView(board);
         window.showInformationMessage("New post submitted.");
       }
@@ -272,14 +266,8 @@ const registerForum = (
     commands.registerCommand(
       "opens1.showthread",
       async (thread: ThreadTitle) => {
-        // const uri: Uri = Uri.parse(`s1:${thread.path}?page=${thread.page}`);
-        // const uri: Uri = Uri.parse(
-        //   `s1:${thread.path.slice(4, -5)}.md?page=${thread.page}`
-        // );
-        // const doc = await workspace.openTextDocument(uri);
         threadProvider.refresh(thread.threadUri);
         currentThread = thread;
-        // await commands.executeCommand("markdown.showPreview", thread.threadUri);
         await showThread(thread.threadUri);
       }
     )

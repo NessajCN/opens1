@@ -45,8 +45,8 @@ export class MemberInfoProvider implements HoverProvider {
     } else {
       await memberInfo.getMemberInfo();
       const memberMarkdownString = new MarkdownString(
-        `**${memberInfo.username}** ( UID: ${memberInfo.uid} )\n\n----\n\n - 主题数: ${memberInfo.posts} , 回帖数: ${memberInfo.replies} \n\n - 鹅: ${memberInfo.geese} , 死鱼: ${memberInfo.currency} , 用户组: ${memberInfo.level}
-        \n - 在线时长: ${memberInfo.totalonline} 小时 , 注册日期: ${memberInfo.registeredAt}`
+        `**${memberInfo.username}** ( UID: ${memberInfo.uid} )\n\n----\n\n 主题数: ${memberInfo.posts} , 回帖数: ${memberInfo.replies} \n\n 鹅: ${memberInfo.geese} , 死鱼: ${memberInfo.currency} , 用户组: ${memberInfo.level}
+        \n 在线时长: ${memberInfo.totalonline} 小时 , 注册日期: ${memberInfo.registeredAt}`
       );
       return hoverRange
         ? new Hover(memberMarkdownString, hoverRange)
