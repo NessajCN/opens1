@@ -48,6 +48,16 @@ const registerForum = (
     .getConfiguration("opens1")
     .get<string>("threadDisplayStyle");
 
+  const getThread = (thread?: ThreadTitle | undefined) => {
+    if (!thread && currentThread) {
+      if (!window.tabGroups.activeTabGroup.activeTab || (window.activeTextEditor && currentThread?.threadUri.toString() != window.activeTextEditor.document.uri.toString()))
+        return undefined;
+      return currentThread;
+    } else {
+      return thread;
+    }
+  }
+
   subscriptions.push(
     // languages.registerHoverProvider({ language: "typescript" }, memberInfoProvider)
     languages.registerHoverProvider({ scheme: "s1" }, memberInfoProvider)
@@ -123,9 +133,7 @@ const registerForum = (
     commands.registerCommand(
       "opens1.nextthreadpage",
       async (thread?: ThreadTitle | undefined) => {
-        if (!thread && currentThread) {
-          thread = currentThread;
-        }
+        thread = getThread(thread);
         if (thread) {
           forumProvider.turnThreadPage(thread, thread.page + 1);
           threadProvider.refresh(thread.threadUri);
@@ -143,9 +151,7 @@ const registerForum = (
     commands.registerCommand(
       "opens1.lastthreadpage",
       async (thread?: ThreadTitle | undefined) => {
-        if (!thread && currentThread) {
-          thread = currentThread;
-        }
+        thread = getThread(thread);
         if (thread) {
           forumProvider.turnThreadPage(thread, thread.page - 1);
           // threadProvider.refresh(thread.threadUri);
@@ -161,26 +167,42 @@ const registerForum = (
   );
   subscriptions.push(
     commands.registerCommand(
-      "opens1.turntopage",
-      async (thread: ThreadTitle) => {
-        const page = await window.showInputBox({
-          title: "跳转页码",
-          prompt: `共${thread.pagination}页, 当前第${thread.page}页`,
-        });
-        if (!page || Number.isNaN(Number(page))) {
-          window.showInformationMessage(
-            "Invalid input. Please enter the number of page."
-          );
-          return;
-        } else if (Number(page) < 1 || Number(page) > thread.pagination) {
-          window.showInformationMessage("Invalid page number.");
-          return;
+      "opens1.latestthreadpage",
+      async (thread?: ThreadTitle | undefined) => {
+        thread = getThread(thread);
+        if (thread) {
+          forumProvider.turnThreadPage(thread, thread.pagination);
+          currentThread = thread;
+          await showThread(thread.threadUri);
         }
-        forumProvider.turnThreadPage(thread, Number(page));
-        // threadProvider.refresh(thread.threadUri);
-        currentThread = thread;
-        // await commands.executeCommand("markdown.showPreview", thread.threadUri);
-        await showThread(thread.threadUri);
+      }
+    )
+  );
+  subscriptions.push(
+    commands.registerCommand(
+      "opens1.turntopage",
+      async (thread?: ThreadTitle | undefined) => {
+        thread = getThread(thread);
+        if (thread) {
+          const page = await window.showInputBox({
+            title: "跳转页码",
+            prompt: `共${thread.pagination}页, 当前第${thread.page}页`,
+          });
+          if (!page || Number.isNaN(Number(page))) {
+            window.showInformationMessage(
+              "Invalid input. Please enter the number of page."
+            );
+            return;
+          } else if (Number(page) < 1 || Number(page) > thread.pagination) {
+            window.showInformationMessage("Invalid page number.");
+            return;
+          }
+          forumProvider.turnThreadPage(thread, Number(page));
+          // threadProvider.refresh(thread.threadUri);
+          currentThread = thread;
+          // await commands.executeCommand("markdown.showPreview", thread.threadUri);
+          await showThread(thread.threadUri);
+        }
       }
     )
   );
@@ -210,21 +232,24 @@ const registerForum = (
   );
 
   subscriptions.push(
-    commands.registerCommand("opens1.reply", async (thread: ThreadTitle) => {
+    commands.registerCommand("opens1.reply", async (thread?: ThreadTitle | undefined) => {
       const replytext = await replyPrompt();
       if (!replytext) {
         return;
       } else {
-        const response = await submitReply(
-          thread.tid,
-          thread.fid,
-          replytext,
-          cookieJar
-        );
-        // console.log(response);
-        forumProvider.turnThreadPage(thread, thread.pagination);
-        threadProvider.refresh(thread.threadUri);
-        window.showInformationMessage("Reply submitted.");
+        thread = getThread(thread);
+        if (thread) {
+          const response = await submitReply(
+            thread.tid,
+            thread.fid,
+            replytext,
+            cookieJar
+          );
+          // console.log(response);
+          forumProvider.turnThreadPage(thread, thread.pagination);
+          threadProvider.refresh(thread.threadUri);
+          window.showInformationMessage("Reply submitted.");
+        }
       }
     })
   );
