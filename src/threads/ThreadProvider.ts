@@ -30,8 +30,13 @@ export default class ThreadProvider implements TextDocumentContentProvider {
   private toMarkdown(post: Post): string {
     let md: string = `# ${post.subject}\n`;
     for (const content of post.contents) {
+      // const args = [{ tid: post.tid, fid:post.fid, pid: content.pid }];
+      // const quotedReplyCmdUri = Uri.parse(
+      //   `command:opens1.quotedreply?${encodeURIComponent(JSON.stringify(args))}`
+      // );
       md += `> **<@${content.author}>** 发表于 ${content.posttime}\n\n`;
       md += `${content.message}\n\n`;
+      // md += `[Quote Reply](${quotedReplyCmdUri})\n\n`;
       md += `----\n\n`;
     }
     return md;
@@ -43,7 +48,7 @@ export default class ThreadProvider implements TextDocumentContentProvider {
       ts += `\n\n  /**\n   * <@${content.author}>\n   * 发表于 ${content.posttime}\n   */\n  `;
       ts += `post${content.num}: string,\n  /**\n   `;
       ts += `* ${content.message.replace(/(\n)+/g, "\n   * ")}\n   */\n  `;
-      ts += `pid${content.pid}: number,`;
+      ts += `fid${post.fid}pid${content.pid}e: number,`;
     }
     ts += `\n}`;
     return ts;
@@ -55,7 +60,7 @@ export default class ThreadProvider implements TextDocumentContentProvider {
       py += `\n\n  def post${content.num}():\n    # <@${
         content.author
       }>\n    # 发表于 ${content.posttime}\n    return`;
-      py += `\n  def pid${content.pid}():\n`;
+      py += `\n  def fid${post.fid}pid${content.pid}e():\n`;
       py += `    """${content.message.replace(
         /(\n)+/g,
         "\n    "
@@ -71,7 +76,7 @@ export default class ThreadProvider implements TextDocumentContentProvider {
       cc += `\n\n  /**\n   * <@${content.author}>\n   * 发表于 ${content.posttime}\n   */\n  `;
       cc += `std::string post${content.num};\n  /**\n   `;
       cc += `* ${content.message.replace(/(\n)+/g, "\n   * ")}\n   */\n  `;
-      cc += `int pid${content.pid};`;
+      cc += `int fid${post.fid}pid${content.pid}e;`;
     }
     cc += `\n}`;
     return cc;
@@ -104,7 +109,9 @@ export default class ThreadProvider implements TextDocumentContentProvider {
       })
       .toArray();
     const subject = $("#thread_subject").text();
-    return { subject, contents };
+    const fidArray = $("#post_reply").attr("onclick")?.match(/&fid=(.+?)&/);
+    const fid = fidArray? Number(fidArray[1]): 0;
+    return { subject, tid, page, fid, contents };
   }
 
   // private getAuthors(doc: string) {

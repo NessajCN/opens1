@@ -72,6 +72,9 @@ export interface PostContent {
 
 export interface Post {
   subject: string,
+  fid: number,
+  tid: string,
+  page: string, 
   contents: PostContent[]
 }
 

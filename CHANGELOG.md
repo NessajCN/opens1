@@ -2,6 +2,13 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.4.0 - 2022-10-5
+
+- Add "Quoted Reply" feature in disguised thread views.
+
+- Fix key binding in disguised views.(Contributed by [iriyano](https://github.com/aaeviru) )
+
+
 ## 0.3.2 - 2022-10-1
 
 - Optimize disguised thread style.

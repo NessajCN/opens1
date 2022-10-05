@@ -22,17 +22,16 @@ export class MemberInfoProvider implements HoverProvider {
     return this.memberHover(document, position);
   }
 
-  private readonly memberPattern: RegExp = /<@(.+?)>/;
-
   private async memberHover(document: TextDocument, position: Position) {
+    const memberPattern: RegExp = /<@(.+?)>/;
     const hoverLineText: string = document.lineAt(position.line).text;
 
     const hoverRange: Range | undefined = document.getWordRangeAtPosition(
       position,
-      this.memberPattern
+      memberPattern
     );
     const matchedArray: RegExpMatchArray | null = hoverLineText.match(
-      this.memberPattern
+      memberPattern
     );
     const username: string | null = matchedArray ? matchedArray[1] : null;
 
@@ -64,6 +63,7 @@ export class MemberInfo implements Member {
       {
         cookieJar: this.cookieJar,
         headers: {
+          // "Referer" is required by GET api. Don't change it.
           Referer: `${S1URL.host}/forum.php`,
         },
       }
@@ -138,12 +138,11 @@ export class MemberInfo implements Member {
         }
       }
     });
-    // console.log(`Geese: ${this.geese}, Currency: ${this.currency}`);
   }
 
-  public uid: number | undefined;
-  public readperm: number | undefined;
-  public geese: number | undefined;
+  uid: number | undefined;
+  readperm: number | undefined;
+  geese: number | undefined;
   currency: number | undefined;
   friends: number | undefined;
   posts: number | undefined;

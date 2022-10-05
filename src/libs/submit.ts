@@ -1,4 +1,5 @@
 import { CookieJar } from "tough-cookie";
+import * as cheerio from "cheerio";
 import got from "got";
 import {
   S1URL,
@@ -38,6 +39,68 @@ export const submitNewPost = async (
   }).text();
   return response;
 };
+
+export const submitQuotedReply = async (
+  tid: string,
+  fid: string,
+  pid: string,
+  replytext: string,
+  cookieJar: CookieJar
+) => {
+  const doc = await got(
+    `${S1URL.host}${S1URL.replyPath}&fid=${fid}&extra=&tid=${tid}&repquote=${pid}`,
+    {cookieJar}
+  ).text();
+  const $ = cheerio.load(doc);
+  const replyForm: ReplyForm = {
+    formhash: "",
+    posttime: Math.floor(Date.now() / 1000),
+    wysiwyg: "1",
+    noticeauthor: "",
+    noticetrimstr: "",
+    noticeauthormsg: "",
+    reppid: pid,
+    reppost: pid,
+    subject: "",
+    message: replytext,
+    usesig: "1",
+    save: "",
+    cookietime: 2592000,
+  };
+
+  $("#ct").children().each((i,el)=>{
+    switch($(el).attr("name")) {
+      case "formhash": {
+        replyForm.formhash = $(el).attr("value") || "";
+        break;
+      }
+      case "noticeauthor": {
+        replyForm.noticeauthor =  $(el).attr("value") || "";
+        break;
+      }
+      case "noticetrimstr": {
+        replyForm.noticetrimstr =  $(el).attr("value") || "";
+        break;
+      }
+      case "noticeauthormsg": {
+        replyForm.noticeauthormsg =  $(el).attr("value") || "";
+        break;
+      }
+      default: {
+        break;
+      }
+  }
+  });
+  
+  const replyURL = `${S1URL.host}/forum.php?mod=post&action=reply&fid=${fid}&tid=${tid}&extra=&replysubmit=yes`;
+  const response = await got(replyURL, {
+    cookieJar: cookieJar,
+    method: "POST",
+    form: replyForm,
+  }).text();
+  return response;
+};
+
 
 export const submitReply = async (
   tid: number,

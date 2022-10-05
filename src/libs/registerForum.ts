@@ -3,7 +3,6 @@ import {
   commands,
   ExtensionContext,
   workspace,
-  Uri,
   languages,
 } from "vscode";
 import {
@@ -14,22 +13,23 @@ import {
 } from "../threads/ForumTitle";
 import { loginPrompt, logout, login } from "./auth";
 import { CookieJar } from "tough-cookie";
-import { submitReply, submitNewPost } from "./submit";
+import { submitReply, submitNewPost, submitQuotedReply } from "./submit";
 import { replyPrompt, newpostPrompt } from "./prompt";
 
 import ThreadProvider from "../threads/ThreadProvider";
 import { Socket } from "socket.io-client";
 import { GUEST } from "../types/S1types";
 import { MemberInfoProvider } from "../member/Members";
+import { QuotedReplyProvider } from "../threads/QuotedReply";
 
-const showThread = async (uri: Uri) => {
+const showThread = async (thread: ThreadTitle) => {
   const displayStyle = workspace
     .getConfiguration("opens1")
     .get<string>("threadDisplayStyle");
   if (displayStyle === "markdown") {
-    await commands.executeCommand("markdown.showPreview", uri);
+    await commands.executeCommand("markdown.showPreview", thread.threadUri);
   } else {
-    await window.showTextDocument(uri, { preview: true });
+    await window.showTextDocument(thread.threadUri, { preview: true });
   }
 };
 
@@ -39,6 +39,7 @@ const registerForum = (
   cookieJar: CookieJar,
   threadProvider: ThreadProvider,
   memberInfoProvider: MemberInfoProvider,
+  quotedReplyProvider: QuotedReplyProvider,
   socket: Socket
 ) => {
   let currentThread: ThreadTitle | undefined;
@@ -66,6 +67,10 @@ const registerForum = (
   subscriptions.push(
     languages.registerHoverProvider({ scheme: "s1" }, memberInfoProvider)
   );
+  subscriptions.push(
+    languages.registerHoverProvider({ scheme: "s1" }, quotedReplyProvider)
+  );
+
   subscriptions.push(
     workspace.registerTextDocumentContentProvider("s1", threadProvider)
   );
@@ -142,7 +147,7 @@ const registerForum = (
           forumProvider.turnThreadPage(thread, thread.page + 1);
           threadProvider.refresh(thread.threadUri);
           currentThread = thread;
-          await showThread(thread.threadUri);
+          await showThread(thread);
         }
       }
     )
@@ -155,7 +160,7 @@ const registerForum = (
         if (thread) {
           forumProvider.turnThreadPage(thread, thread.page - 1);
           currentThread = thread;
-          await showThread(thread.threadUri);
+          await showThread(thread);
         }
       }
     )
@@ -168,7 +173,7 @@ const registerForum = (
         if (thread) {
           forumProvider.turnThreadPage(thread, thread.pagination);
           currentThread = thread;
-          await showThread(thread.threadUri);
+          await showThread(thread);
         }
       }
     )
@@ -194,7 +199,7 @@ const registerForum = (
           }
           forumProvider.turnThreadPage(thread, Number(page));
           currentThread = thread;
-          await showThread(thread.threadUri);
+          await showThread(thread);
         }
       }
     )
@@ -222,6 +227,26 @@ const registerForum = (
       forumProvider.refresh();
       window.showInformationMessage("You have logged out.");
     })
+  );
+
+  subscriptions.push(
+    commands.registerCommand(
+      "opens1.quotedreply",
+      async ({ tid, fid, pid }) => {
+        const replytext = await replyPrompt();
+        if (!replytext) {
+          return;
+        } else {
+          await submitQuotedReply(tid, fid, pid, replytext, cookieJar);
+          const thread = getThread();
+          if (thread) {
+            forumProvider.turnThreadPage(thread, thread.pagination);
+            threadProvider.refresh(thread.threadUri);
+          }
+          window.showInformationMessage("Reply submitted.");
+        }
+      }
+    )
   );
 
   subscriptions.push(
@@ -268,7 +293,7 @@ const registerForum = (
       async (thread: ThreadTitle) => {
         threadProvider.refresh(thread.threadUri);
         currentThread = thread;
-        await showThread(thread.threadUri);
+        await showThread(thread);
       }
     )
   );

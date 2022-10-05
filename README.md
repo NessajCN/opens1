@@ -42,22 +42,16 @@ To be tested.
 
 The extension is in early Alpha version.
 
-## 0.3.2 - 2022-10-1
+## 0.4.0 - 2022-10-5
 
-- Optimize disguised thread style.
+- Add "Quoted Reply" feature in disguised thread views.
 
-- Change the thread content provider from archiver to normal forum.
-
-## 0.3.1 - 2022-10-1
-
-- Bug fix of displaying posts and replies.
-
+- Fix key binding in disguised views.(Contributed by [iriyano](https://github.com/aaeviru) )
 
 
 ## 0.3.0 - 2022-10-1
 
 - Add member info display on mouse hover for disguised display style.
-
 
 
 ## Features incoming
