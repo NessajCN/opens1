@@ -1,13 +1,9 @@
 import { CookieJar } from "tough-cookie";
 import * as cheerio from "cheerio";
 import got from "got";
-import {
-  S1URL,
-  NewPostForm,
-  ReplyForm,
-  Newpost,
-} from "../types/S1types";
+import { S1URL, NewPostForm, ReplyForm, Newpost } from "../types/S1types";
 import { getFormHash } from "./auth";
+import { Socket } from "socket.io-client";
 
 export const submitNewPost = async (
   fid: number,
@@ -45,11 +41,13 @@ export const submitQuotedReply = async (
   fid: string,
   pid: string,
   replytext: string,
-  cookieJar: CookieJar
+  cookieJar: CookieJar,
+  socket: Socket,
+  onlineUsers: Map<string, string>
 ) => {
   const doc = await got(
     `${S1URL.host}${S1URL.replyPath}&fid=${fid}&extra=&tid=${tid}&repquote=${pid}`,
-    {cookieJar}
+    { cookieJar }
   ).text();
   const $ = cheerio.load(doc);
   const replyForm: ReplyForm = {
@@ -68,30 +66,42 @@ export const submitQuotedReply = async (
     cookietime: 2592000,
   };
 
-  $("#ct").children().each((i,el)=>{
-    switch($(el).attr("name")) {
-      case "formhash": {
-        replyForm.formhash = $(el).attr("value") || "";
-        break;
+  $("#ct")
+    .children()
+    .each((i, el) => {
+      switch ($(el).attr("name")) {
+        case "formhash": {
+          replyForm.formhash = $(el).attr("value") || "";
+          break;
+        }
+        case "noticeauthor": {
+          replyForm.noticeauthor = $(el).attr("value") || "";
+          break;
+        }
+        case "noticetrimstr": {
+          replyForm.noticetrimstr = $(el).attr("value") || "";
+          break;
+        }
+        case "noticeauthormsg": {
+          replyForm.noticeauthormsg = $(el).attr("value") || "";
+          break;
+        }
+        default: {
+          break;
+        }
       }
-      case "noticeauthor": {
-        replyForm.noticeauthor =  $(el).attr("value") || "";
-        break;
-      }
-      case "noticetrimstr": {
-        replyForm.noticetrimstr =  $(el).attr("value") || "";
-        break;
-      }
-      case "noticeauthormsg": {
-        replyForm.noticeauthormsg =  $(el).attr("value") || "";
-        break;
-      }
-      default: {
-        break;
-      }
+    });
+
+  // Find quoted author name and see if it's an online user of opens1.
+  const quotedAuthorArray = replyForm.noticetrimstr?.match(/\](.+?)发表于/);
+  const quotedAuthor =
+    quotedAuthorArray && quotedAuthorArray[1]
+      ? quotedAuthorArray[1].trim()
+      : null;
+  if (quotedAuthor && Array.from(onlineUsers.values()).includes(quotedAuthor)) {
+    socket.emit("notify", { quotedAuthor, tid, pid, replytext });
   }
-  });
-  
+
   const replyURL = `${S1URL.host}/forum.php?mod=post&action=reply&fid=${fid}&tid=${tid}&extra=&replysubmit=yes`;
   const response = await got(replyURL, {
     cookieJar: cookieJar,
@@ -100,7 +110,6 @@ export const submitQuotedReply = async (
   }).text();
   return response;
 };
-
 
 export const submitReply = async (
   tid: number,

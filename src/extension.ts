@@ -8,7 +8,6 @@ import { checkCredential, login } from "./libs/auth";
 import ThreadProvider from "./threads/ThreadProvider";
 import registerForum from "./libs/registerForum";
 import { socketIOInit } from "./libs/webrtc";
-import { Socket } from "socket.io-client";
 import { MemberInfoProvider } from "./member/Members";
 import { QuotedReplyProvider } from "./threads/QuotedReply";
 
@@ -18,7 +17,8 @@ export async function activate(context: vscode.ExtensionContext) {
   const credential: Credential = await checkCredential();
   const cookieJar: CookieJar = new CookieJar();
   const stage1stProvider = new ForumTitleProvider(cookieJar, credential);
-  const socket: Socket = await socketIOInit(stage1stProvider);
+  const onlineUsers: Map<string, string> = new Map();
+  const socket = await socketIOInit(stage1stProvider, onlineUsers);
 
   credential !== GUEST && (await login(credential, cookieJar, socket));
 
@@ -32,7 +32,8 @@ export async function activate(context: vscode.ExtensionContext) {
     threadProvider,
     memberInfoProvider,
     quotedReplyProvider,
-    socket
+    socket,
+    onlineUsers
   );
 }
 

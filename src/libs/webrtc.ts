@@ -14,13 +14,19 @@ const updateUser = (userMap: Map<string, string>, userSet: Set<string>) => {
   });
 };
 
-export const socketIOInit = async (forumProvider: ForumTitleProvider) => {
-  const onlineUsers: Map<string, string> = new Map();
+export const socketIOInit = async (
+  forumProvider: ForumTitleProvider,
+  onlineUsers: Map<string, string>
+) => {
+  // const onlineUsers: Map<string, string> = new Map();
   const socket = io("http://gitnessaj.com:3020", {
     reconnection: true,
   });
   socket.on("connect", () => {
-    console.log(`socket connected: ${socket.id}`);
+    if (forumProvider.credential !== GUEST) {
+      socket.emit("identify", forumProvider.credential.username);
+    }
+    // console.log(`socket connected: ${socket.id}`);
   });
   socket.on("disconnect", () => {
     console.log(`socket disconnected: ${socket.id}`);
@@ -33,8 +39,8 @@ export const socketIOInit = async (forumProvider: ForumTitleProvider) => {
       });
       updateUser(onlineUsers, forumProvider.opens1Users);
       // forumProvider.refresh();
-      forumProvider.accounts && forumProvider.updateView(forumProvider.accounts);
-
+      forumProvider.accounts &&
+        forumProvider.updateView(forumProvider.accounts);
     }
   });
 
@@ -42,10 +48,10 @@ export const socketIOInit = async (forumProvider: ForumTitleProvider) => {
     if (forumProvider.credential !== GUEST) {
       onlineUsers.delete(socketid);
       updateUser(onlineUsers, forumProvider.opens1Users);
-      forumProvider.accounts && forumProvider.updateView(forumProvider.accounts);
+      forumProvider.accounts &&
+        forumProvider.updateView(forumProvider.accounts);
       // forumProvider.refresh();
     }
   });
-
   return socket;
 };

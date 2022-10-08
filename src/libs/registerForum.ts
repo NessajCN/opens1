@@ -40,7 +40,8 @@ const registerForum = (
   threadProvider: ThreadProvider,
   memberInfoProvider: MemberInfoProvider,
   quotedReplyProvider: QuotedReplyProvider,
-  socket: Socket
+  socket: Socket,
+  onlineUsers: Map<string, string>
 ) => {
   let currentThread: ThreadTitle | undefined;
 
@@ -189,12 +190,12 @@ const registerForum = (
             prompt: `共${thread.pagination}页, 当前第${thread.page}页`,
           });
           if (!page || Number.isNaN(Number(page))) {
-            window.showInformationMessage(
+            window.showWarningMessage(
               "Invalid input. Please enter the number of page."
             );
             return;
           } else if (Number(page) < 1 || Number(page) > thread.pagination) {
-            window.showInformationMessage("Invalid page number.");
+            window.showWarningMessage("Invalid page number.");
             return;
           }
           forumProvider.turnThreadPage(thread, Number(page));
@@ -215,7 +216,7 @@ const registerForum = (
         );
       } else {
         forumProvider.credential = GUEST;
-        window.showInformationMessage("Authentication failed.");
+        window.showErrorMessage("Authentication failed.");
       }
       forumProvider.refresh();
     })
@@ -237,13 +238,22 @@ const registerForum = (
         if (!replytext) {
           return;
         } else {
-          await submitQuotedReply(tid, fid, pid, replytext, cookieJar);
+          await submitQuotedReply(
+            tid,
+            fid,
+            pid,
+            replytext,
+            cookieJar,
+            socket,
+            onlineUsers
+          );
           const thread = getThread();
           if (thread) {
             forumProvider.turnThreadPage(thread, thread.pagination);
+            currentThread = thread;
             threadProvider.refresh(thread.threadUri);
           }
-          window.showInformationMessage("Reply submitted.");
+          window.showInformationMessage("Quoted Reply submitted.");
         }
       }
     )

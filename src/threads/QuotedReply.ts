@@ -1,3 +1,4 @@
+import { Socket } from "socket.io-client";
 import {
   HoverProvider,
   Hover,
@@ -51,29 +52,3 @@ export class QuotedReplyProvider implements HoverProvider {
     }
   }
 }
-
-// export class QuotedReplyProvider implements DocumentLinkProvider {
-//   constructor(private cookieJar: CookieJar) {}
-//   provideDocumentLinks(document: TextDocument): ProviderResult<DocumentLink[]> {
-//     return this.quotedReply(document);
-//   }
-
-//   private async quotedReply(document: TextDocument) {
-//     const pidPattern: RegExp = /pid(.+?):/;
-//     const repLink: DocumentLink[] = [];
-//     for (let i = 0; i < document.lineCount; i++) {
-//       const lineText = document.lineAt(i).text;
-//       const matchedArray: RegExpMatchArray | null = lineText.match(pidPattern);
-//       if (matchedArray && matchedArray.index) {
-//         const linkRange = new Range(
-//           i,
-//           matchedArray.index,
-//           i,
-//           matchedArray.index + matchedArray[0].length
-//         );
-//         repLink.push(new DocumentLink(linkRange));
-//       }
-//     }
-//     return repLink;
-//   }
-// }
