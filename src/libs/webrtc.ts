@@ -58,7 +58,7 @@ export const socketIOInit = async (
 
   socket.on("usersOnline", (user: [string, string]) => {
     if (forumProvider.credential !== GUEST) {
-      onlineUsers.set(user[0][0], user[0][1]);
+      onlineUsers.set(user[0], user[1]);
       updateUser(onlineUsers, forumProvider.opens1Users);
       // forumProvider.refresh();
       forumProvider.accounts &&

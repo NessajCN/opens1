@@ -42,7 +42,7 @@ To be tested.
 
 The extension is in early Alpha version.
 
-## 0.4.1 - 2022-10-6
+## 0.4.2 - 2022-10-9
 
 - Optimized display of online users of OpenS1.
 
