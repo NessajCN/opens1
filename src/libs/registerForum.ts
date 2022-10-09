@@ -99,6 +99,13 @@ const registerForum = (
       forumProvider.refresh();
     })
   );
+
+  subscriptions.push(
+    commands.registerCommand("opens1.fetchallusers", () => {
+      socket.emit("fetchAllUsers");
+    })
+  );
+
   subscriptions.push(
     commands.registerCommand(
       "opens1.updateview",
@@ -238,7 +245,7 @@ const registerForum = (
         if (!replytext) {
           return;
         } else {
-          await submitQuotedReply(
+          const quotedAuthor = await submitQuotedReply(
             tid,
             fid,
             pid,
@@ -252,6 +259,12 @@ const registerForum = (
             forumProvider.turnThreadPage(thread, thread.pagination);
             currentThread = thread;
             threadProvider.refresh(thread.threadUri);
+            if (
+              quotedAuthor &&
+              new Set([...onlineUsers.values()]).has(quotedAuthor)
+            ) {
+              socket.emit("notify", { quotedAuthor, thread });
+            }
           }
           window.showInformationMessage("Quoted Reply submitted.");
         }

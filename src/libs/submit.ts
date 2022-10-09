@@ -98,9 +98,6 @@ export const submitQuotedReply = async (
     quotedAuthorArray && quotedAuthorArray[1]
       ? quotedAuthorArray[1].trim()
       : null;
-  if (quotedAuthor && Array.from(onlineUsers.values()).includes(quotedAuthor)) {
-    socket.emit("notify", { quotedAuthor, tid, pid, replytext });
-  }
 
   const replyURL = `${S1URL.host}/forum.php?mod=post&action=reply&fid=${fid}&tid=${tid}&extra=&replysubmit=yes`;
   const response = await got(replyURL, {
@@ -108,7 +105,7 @@ export const submitQuotedReply = async (
     method: "POST",
     form: replyForm,
   }).text();
-  return response;
+  return quotedAuthor;
 };
 
 export const submitReply = async (

@@ -42,6 +42,10 @@ To be tested.
 
 The extension is in early Alpha version.
 
+## 0.4.1 - 2022-10-6
+
+- Optimized display of online users of OpenS1.
+
 ## 0.4.0 - 2022-10-5
 
 - Add "Quoted Reply" feature in disguised thread views.

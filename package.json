@@ -13,7 +13,7 @@
     "email": "ksnessaj@hotmail.com",
     "url": "https://github.com/NessajCN"
   },
-  "version": "0.4.0",
+  "version": "0.4.1",
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -62,6 +62,12 @@
       {
         "command": "opens1.refresh",
         "title": "Refresh New Threads",
+        "category": "S1",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "opens1.fetchallusers",
+        "title": "Fetch online users",
         "category": "S1",
         "icon": "$(refresh)"
       },
@@ -189,28 +195,33 @@
         },
         {
           "command": "opens1.updateview",
-          "when": "view == stage1st && viewItem =~ /board/ ",
+          "when": "view == stage1st && viewItem =~ /boardp/ ",
           "group": "inline@2"
+        },
+        {
+          "command": "opens1.fetchallusers",
+          "when": "view == stage1st && viewItem =~ /accounts/ ",
+          "group": "inline@3"
         },
         {
           "command": "opens1.lastthreadpage",
           "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadp1 && viewItem != threadp0",
-          "group": "inline@3"
+          "group": "inline@4"
         },
         {
           "command": "opens1.nextthreadpage",
           "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadpend && viewItem != threadp0",
-          "group": "inline@4"
+          "group": "inline@5"
         },
         {
           "command": "opens1.newpost",
           "when": "view == stage1st && viewItem =~ /boardp/ && opens1.authenticated == true",
-          "group": "inline@5"
+          "group": "inline@6"
         },
         {
           "command": "opens1.reply",
           "when": "view == stage1st && viewItem =~ /thread/ && opens1.authenticated == true",
-          "group": "inline@6"
+          "group": "inline@7"
         },
         {
           "command": "opens1.turntopage",

@@ -64,15 +64,13 @@ export class ForumTitleProvider
       // This condition block can be ignored.
       return [];
     } else if (element && element instanceof AccountTitle) {
-      return Promise.resolve(
-        Array.from(this.opens1Users.keys()).map(
-          (user) =>
-            new OnlineUser(
-              user,
-              user === this.credential.username,
-              TreeItemCollapsibleState.None
-            )
-        )
+      return Array.from(this.opens1Users.keys()).map(
+        (user) =>
+          new OnlineUser(
+            user,
+            user === this.credential.username,
+            TreeItemCollapsibleState.None
+          )
       );
     } else {
       return checkAuth(this.cookieJar).then((auth) => {
@@ -254,7 +252,7 @@ export class AccountTitle extends TreeItem {
     public readonly collapsibleState: TreeItemCollapsibleState
   ) {
     super(title, collapsibleState);
-    this.contextValue = `boarduser`;
+    this.contextValue = `accounts`;
   }
 
   iconPath = new ThemeIcon("account");
@@ -267,7 +265,7 @@ export class OnlineUser extends TreeItem {
     public readonly collapsibleState: TreeItemCollapsibleState
   ) {
     super(isMe ? `${username}(Me)` : username, collapsibleState);
-    this.contextValue = `onlineusers`;
+    this.contextValue = `onlineuser`;
   }
 
   iconPath = new ThemeIcon("account");

@@ -2,6 +2,10 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.4.1 - 2022-10-6
+
+- Optimized display of online users of OpenS1.
+
 ## 0.4.0 - 2022-10-5
 
 - Add "Quoted Reply" feature in disguised thread views.
