@@ -259,11 +259,14 @@ const registerForum = (
             forumProvider.turnThreadPage(thread, thread.pagination);
             currentThread = thread;
             threadProvider.refresh(thread.threadUri);
-            if (
-              quotedAuthor &&
-              new Set([...onlineUsers.values()]).has(quotedAuthor)
-            ) {
-              socket.emit("notify", { quotedAuthor, thread });
+            if (quotedAuthor && forumProvider.opens1Users.has(quotedAuthor)) {
+              socket.emit("notify", quotedAuthor, {
+                title: thread.title,
+                path: thread.path,
+                fid: thread.fid,
+                replies: thread.replies,
+                page: thread.page,
+              });
             }
           }
           window.showInformationMessage("Quoted Reply submitted.");

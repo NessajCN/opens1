@@ -42,6 +42,10 @@ To be tested.
 
 The extension is in early Alpha version.
 
+## 0.4.3 - 2022-10-9
+
+- Fix bug of notification.
+
 ## 0.4.2 - 2022-10-9
 
 - Optimized display of online users of OpenS1.

@@ -2,6 +2,11 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.4.3 - 2022-10-9
+
+- Fix bug of notification.
+
+
 ## 0.4.2 - 2022-10-9
 
 - Optimized display of online users of OpenS1.

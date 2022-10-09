@@ -4,7 +4,7 @@
 //   RTCSessionDescription,
 // } from "werift";
 import { io } from "socket.io-client";
-import { commands, window } from "vscode";
+import { commands, TreeItemCollapsibleState, window } from "vscode";
 import { ForumTitleProvider, ThreadTitle } from "../threads/ForumTitle";
 import { GUEST } from "../types/S1types";
 
@@ -46,9 +46,17 @@ export const socketIOInit = async (
     console.log(`socket disconnected: ${socket.id}`);
   });
 
-  socket.on("replyreminder", (thread?: ThreadTitle | undefined) => {
+  socket.on("replyreminder", (threadattr) => {
+    const thread = new ThreadTitle(
+      threadattr.title,
+      threadattr.path,
+      threadattr.fid,
+      threadattr.replies,
+      TreeItemCollapsibleState.None
+    );
+    thread.page = threadattr.page;
     window
-      .showInformationMessage(`New reply: ${thread?.title}`, "Ignore", "Read")
+      .showInformationMessage(`New reply: ${thread.title}`, "Read", "Ignore")
       .then((action) => {
         if (action === "Read" && thread) {
           commands.executeCommand("opens1.showthread", thread);

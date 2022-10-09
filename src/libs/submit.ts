@@ -93,7 +93,7 @@ export const submitQuotedReply = async (
     });
 
   // Find quoted author name and see if it's an online user of opens1.
-  const quotedAuthorArray = replyForm.noticetrimstr?.match(/\](.+?)发表于/);
+  const quotedAuthorArray = replyForm.noticetrimstr?.match(/\[color=#999999\](.+?)发表于/);
   const quotedAuthor =
     quotedAuthorArray && quotedAuthorArray[1]
       ? quotedAuthorArray[1].trim()
