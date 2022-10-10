@@ -4,6 +4,25 @@ import got from "got";
 import { S1URL, NewPostForm, ReplyForm, Newpost } from "../types/S1types";
 import { getFormHash } from "./auth";
 import { Socket } from "socket.io-client";
+import { workspace } from "vscode";
+
+const charFix = (text: string) => {
+  const charList =
+    workspace.getConfiguration("opens1").get<string[]>("chars2bFixed") || [];
+
+  charList.forEach((chars) => {
+    if (text.includes(chars)) {
+      const re = new RegExp(chars,"g");
+      text = text.replace(re, (word) =>
+        word
+          .split("")
+          .map((char) => `&#${char.charCodeAt(0)};`)
+          .join("")
+      );
+    }
+  });
+  return text;
+};
 
 export const submitNewPost = async (
   fid: number,
@@ -19,8 +38,8 @@ export const submitNewPost = async (
     posttime: Math.floor(Date.now() / 1000),
     wysiwyg: "1",
     typeid: 151,
-    subject: newpost.subject,
-    message: newpost.message,
+    subject: charFix(newpost.subject),
+    message: charFix(newpost.message),
     readperm: 0,
     allownoticeauthor: "1",
     usesig: "1",
@@ -60,7 +79,7 @@ export const submitQuotedReply = async (
     reppid: pid,
     reppost: pid,
     subject: "",
-    message: replytext,
+    message: charFix(replytext),
     usesig: "1",
     save: "",
     cookietime: 2592000,
@@ -93,7 +112,9 @@ export const submitQuotedReply = async (
     });
 
   // Find quoted author name and see if it's an online user of opens1.
-  const quotedAuthorArray = replyForm.noticetrimstr?.match(/\[color=#999999\](.+?)发表于/);
+  const quotedAuthorArray = replyForm.noticetrimstr?.match(
+    /\[color=#999999\](.+?)发表于/
+  );
   const quotedAuthor =
     quotedAuthorArray && quotedAuthorArray[1]
       ? quotedAuthorArray[1].trim()
@@ -126,7 +147,7 @@ export const submitReply = async (
     noticetrimstr: "",
     noticeauthormsg: "",
     subject: "",
-    message: replytext,
+    message: charFix(replytext),
     usesig: "1",
     save: "",
     cookietime: 2592000,

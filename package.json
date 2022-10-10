@@ -13,7 +13,7 @@
     "email": "ksnessaj@hotmail.com",
     "url": "https://github.com/NessajCN"
   },
-  "version": "0.4.3",
+  "version": "0.4.4",
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -49,6 +49,11 @@
           "type": "array",
           "default": [],
           "description": "Hidden boards are listed here. Delete the listed board names to unhide them."
+        },
+        "opens1.chars2bFixed": {
+          "type": "array",
+          "default": [],
+          "description": "Add characters that are mistakenly replaced here. DON'T ADD REAL SENSITIVE CHARACTERS."
         }
       }
     },

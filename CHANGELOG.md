@@ -2,6 +2,10 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.4.4 - 2022-10-10
+
+- Add character fixing for custom words.
+
 ## 0.4.3 - 2022-10-9
 
 - Fix bug of notification.

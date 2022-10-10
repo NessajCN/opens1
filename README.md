@@ -42,6 +42,10 @@ To be tested.
 
 The extension is in early Alpha version.
 
+## 0.4.4 - 2022-10-10
+
+- Add character fixing for custom words.
+
 ## 0.4.3 - 2022-10-9
 
 - Fix bug of notification.
