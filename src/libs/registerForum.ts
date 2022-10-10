@@ -255,19 +255,22 @@ const registerForum = (
             onlineUsers
           );
           const thread = getThread();
-          if (thread) {
+          if (thread && quotedAuthor) {
             forumProvider.turnThreadPage(thread, thread.pagination);
             currentThread = thread;
             threadProvider.refresh(thread.threadUri);
-            if (quotedAuthor && forumProvider.opens1Users.has(quotedAuthor)) {
-              socket.emit("notify", quotedAuthor, {
-                title: thread.title,
-                path: thread.path,
-                fid: thread.fid,
-                replies: thread.replies,
-                page: thread.page,
-              });
-            }
+
+            forumProvider.opens1Users.forEach((user) => {
+              if (user.toUpperCase() === quotedAuthor.toUpperCase()) {
+                socket.emit("notify", user, {
+                  title: thread.title,
+                  path: thread.path,
+                  fid: thread.fid,
+                  replies: thread.replies,
+                  page: thread.page,
+                });
+              }
+            });
           }
           window.showInformationMessage("Quoted Reply submitted.");
         }

@@ -4,7 +4,7 @@
 //   RTCSessionDescription,
 // } from "werift";
 import { io } from "socket.io-client";
-import { commands, TreeItemCollapsibleState, window } from "vscode";
+import { commands, TreeItemCollapsibleState, window, Uri } from "vscode";
 import { ForumTitleProvider, ThreadTitle } from "../threads/ForumTitle";
 import { GUEST } from "../types/S1types";
 
@@ -55,10 +55,13 @@ export const socketIOInit = async (
       TreeItemCollapsibleState.None
     );
     thread.page = threadattr.page;
-    window
+    thread.threadUri = Uri.parse(
+      `s1:${thread.path.slice(4, -5)}-${thread.page}.${thread.ext}`
+    );
+  window
       .showInformationMessage(`New reply: ${thread.title}`, "Read", "Ignore")
       .then((action) => {
-        if (action === "Read" && thread) {
+        if (action === "Read") {
           commands.executeCommand("opens1.showthread", thread);
         }
       });
