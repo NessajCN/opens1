@@ -13,7 +13,7 @@
     "email": "ksnessaj@hotmail.com",
     "url": "https://github.com/NessajCN"
   },
-  "version": "0.4.4",
+  "version": "0.5.0",
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -145,6 +145,18 @@
         "title": "Turn to page",
         "category": "S1",
         "icon": "$(arrow-small-left)"
+      },
+      {
+        "command": "opens1.favorite",
+        "title": "Add to Favorites",
+        "category": "S1",
+        "icon": "$(star-full)"
+      },
+      {
+        "command": "opens1.unfavorite",
+        "title": "Remove from Favorites",
+        "category": "S1",
+        "icon": "$(star-empty)"
       }
     ],
     "keybindings": [
@@ -200,22 +212,22 @@
         },
         {
           "command": "opens1.updateview",
-          "when": "view == stage1st && viewItem =~ /boardp/ ",
+          "when": "view == stage1st && viewItem =~ /board/ ",
           "group": "inline@2"
         },
         {
           "command": "opens1.fetchallusers",
-          "when": "view == stage1st && viewItem =~ /accounts/ ",
+          "when": "view == stage1st && viewItem == accounts ",
           "group": "inline@3"
         },
         {
           "command": "opens1.lastthreadpage",
-          "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadp1 && viewItem != threadp0",
+          "when": "viewItem == threadpage || viewItem == threadend || viewItem == favoritepage || viewItem == favoriteend",
           "group": "inline@4"
         },
         {
           "command": "opens1.nextthreadpage",
-          "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadpend && viewItem != threadp0",
+          "when": " viewItem == threadfirstpage || viewItem == threadpage || viewItem == favoritefirstpage || viewItem == favoritepage",
           "group": "inline@5"
         },
         {
@@ -225,16 +237,24 @@
         },
         {
           "command": "opens1.reply",
-          "when": "view == stage1st && viewItem =~ /thread/ && opens1.authenticated == true",
+          "when": "viewItem =~ /thread/ && opens1.authenticated == true ||viewItem =~ /favorite/ && opens1.authenticated == true",
           "group": "inline@7"
         },
         {
           "command": "opens1.turntopage",
-          "when": "view == stage1st && viewItem =~ /threadp/ && viewItem != threadp0"
+          "when": "viewItem =~ /thread/ && viewItem != threadonepage || viewItem =~ /favorite/ && viewItem != favoriteonepage"
         },
         {
           "command": "opens1.hideboard",
-          "when": "view == stage1st && viewItem =~ /board/"
+          "when": "view == stage1st && viewItem =~ /boardp/"
+        },
+        {
+          "command": "opens1.favorite",
+          "when": "view == stage1st && viewItem =~ /thread/ && opens1.authenticated == true"
+        },
+        {
+          "command": "opens1.unfavorite",
+          "when": "view == stage1st && viewItem =~ /favorite/ && opens1.authenticated == true"
         }
       ]
     },

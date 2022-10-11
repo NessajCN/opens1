@@ -51,8 +51,8 @@ export const socketIOInit = async (
       threadattr.title,
       threadattr.path,
       threadattr.fid,
-      threadattr.replies,
-      TreeItemCollapsibleState.None
+      threadattr.replies
+      // TreeItemCollapsibleState.None
     );
     thread.page = threadattr.page;
     thread.threadUri = Uri.parse(

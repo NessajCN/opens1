@@ -4,6 +4,8 @@ export const S1URL = {
   logoutPath: "/member.php?mod=logging&action=logout",
   newPostPath: "/forum.php?mod=post&action=newthread",
   replyPath: "/forum.php?mod=post&action=reply",
+  favoritePath: "/home.php?mod=spacecp&ac=favorite&type=thread",
+  favReferer:"/home.php?mod=space&do=favorite&view=me",
   title: "stage1st",
 } as const;
 

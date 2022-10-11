@@ -2,6 +2,13 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.5.0 - 2022-10-11
+
+- Add "Favorites" to the top view.
+> Favorite a thread simply by right clicking on it and `Add to Favorites`.
+> To remove favorited thread, do the same to the *Favorite* view items with the exception of `Remove from Favorites`.
+
+
 ## 0.4.4 - 2022-10-10
 
 - Add character fixing for custom words.

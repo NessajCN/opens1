@@ -30,6 +30,7 @@ export class ForumTitleProvider
   > = this._onDidChangeTreeData.event;
 
   public accounts: AccountTitle | undefined;
+  public favorites: BoardTitle | undefined;
 
   constructor(private cookieJar: CookieJar, public credential: Credential) {}
 
@@ -60,7 +61,7 @@ export class ForumTitleProvider
       element &&
       (element instanceof ThreadTitle || element instanceof OnlineUser)
     ) {
-      // ThreadTitle won't call getChildren as it's collapseState is set to None.
+      // ThreadTitle or OnlineUser won't call getChildren as it's collapseState is set to None.
       // This condition block can be ignored.
       return [];
     } else if (element && element instanceof AccountTitle) {
@@ -68,20 +69,26 @@ export class ForumTitleProvider
         (user) =>
           new OnlineUser(
             user,
-            user === this.credential.username,
-            TreeItemCollapsibleState.None
+            user === this.credential.username
+            // TreeItemCollapsibleState.None
           )
       );
     } else {
       return checkAuth(this.cookieJar).then((auth) => {
         return auth
           ? this.getForumEntries().then((boardTitles) => {
-              this.accounts = new AccountTitle(
-                "OpenS1用户",
-                // `OpenS1用户(${this.opens1Users.size}人)`,
-                TreeItemCollapsibleState.Collapsed
+              this.favorites = new FavoritesTitle(
+                "Favorites",
+                "home.php?mod=space&do=favorite&type=thread"
+                // TreeItemCollapsibleState.Collapsed
               );
-              const titles = [...boardTitles, this.accounts];
+              // this.favorites.iconPath = new ThemeIcon("star-full");
+              // this.favorites.contextValue = "board";
+              this.accounts = new AccountTitle(
+                "OpenS1用户"
+                // TreeItemCollapsibleState.Collapsed
+              );
+              const titles = [this.favorites, ...boardTitles, this.accounts];
               return titles;
             })
           : this.getForumEntries();
@@ -92,52 +99,99 @@ export class ForumTitleProvider
   private async getForumEntries(
     element?: ThreadTitle | BoardTitle | undefined
   ): Promise<(ThreadTitle | BoardTitle)[]> {
-    const fetchURL: string = element
-      ? `${S1URL.host}/archiver/${element.path}?page=${element.page}`
-      : `${S1URL.host}/archiver/`;
-    let forumDoc: string;
-    try {
-      forumDoc = await got(fetchURL, { cookieJar: this.cookieJar }).text();
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
+    const fetchURL: string = !element
+      ? `${S1URL.host}/archiver/`
+      : element.title === "Favorites"
+      ? `${S1URL.host}/${element.path}`
+      : `${S1URL.host}/archiver/${element.path}?page=${element.page}`;
+
+    const forumDoc = await got(fetchURL, { cookieJar: this.cookieJar }).text();
 
     const $: cheerio.CheerioAPI = cheerio.load(forumDoc);
-    // const content = $('#content li a').map((i, el) => {
-    //   const title = $(el).text();
-    //   return title;
-    // }).get();
-    // console.log(content);
 
-    const entries = $("#content li")
-      .map((i, el) => {
-        const path: string = $(el).children("a").attr("href") || "#";
-        const title: string = $(el).text().trim();
-        const conf =
-          workspace.getConfiguration("opens1").get<string[]>("hiddenBoards") ||
-          [];
-        if (path.includes("fid-") && !conf.includes(title)) {
-          return new BoardTitle(
-            title,
-            path,
-            TreeItemCollapsibleState.Collapsed
-          );
-        } else if (path.includes("tid-")) {
-          $(el).children("a").remove();
-          const replies: number = Number($(el).text().trim().slice(1, -4));
-          const fid: number = Number(element ? element.path.slice(4, -5) : 0);
-          return new ThreadTitle(
-            title,
-            path,
-            fid,
-            replies,
-            TreeItemCollapsibleState.None
-          );
-        }
-      })
-      .get();
+    const conf =
+      workspace.getConfiguration("opens1").get<string[]>("hiddenBoards") || [];
+
+    const entries =
+      element?.title === "Favorites"
+        ? await Promise.all(
+            $("#favorite_ul li")
+              .map(async (i, el) => {
+                const favid: number = Number($(el).attr("id")?.slice(4));
+                $(el).children(`#a_delete_${favid}`).remove();
+                const href: string = $(el).children("a").attr("href") || "#";
+                const title: string = $(el).children("a").text().trim();
+                const tid: number =
+                  href.split("-").length > 1 ? Number(href.split("-")[1]) : 0;
+                const path: string = `tid-${tid}.html`;
+                const lastpost = await this.getFidAndReplies(tid);
+
+                return new FavoriteThreadTitle(
+                  title,
+                  path,
+                  lastpost.fid,
+                  lastpost.replies,
+                  favid
+                );
+              })
+              .get()
+          )
+        : $("#content li")
+            .map((i, el) => {
+              const path: string = $(el).children("a").attr("href") || "#";
+              const title: string = $(el).text().trim();
+              if (path.includes("fid-") && !conf.includes(title)) {
+                return new BoardTitle(
+                  title,
+                  path
+                  // TreeItemCollapsibleState.Collapsed
+                );
+              } else if (path.includes("tid-")) {
+                $(el).children("a").remove();
+                const replies: number = Number(
+                  $(el).text().trim().slice(1, -4)
+                );
+                const fid: number = Number(
+                  element ? element.path.slice(4, -5) : 0
+                );
+                return new ThreadTitle(
+                  title,
+                  path,
+                  fid,
+                  replies
+                  // TreeItemCollapsibleState.None
+                );
+              }
+            })
+            .get();
     return entries;
+  }
+
+  private async getFidAndReplies(tid: number) {
+    const doc = await got(
+      `${S1URL.host}/forum.php?mod=redirect&tid=${tid}&goto=lastpost`,
+      {
+        cookieJar: this.cookieJar,
+      }
+    ).text();
+    const $ = cheerio.load(doc);
+    const post = { fid: 0, replies: 0 };
+    $("#postlist")
+      .children("div")
+      .each((i, el) => {
+        if ($(el).attr("id")?.startsWith("post_")) {
+          const pid = $(el).attr("id")?.slice(5);
+          pid &&
+            (post.replies = Number(
+              $(`#postnum${pid}`).text().trim().replace("#", "")
+            ));
+        }
+      });
+    const fidArray = $("#post_reply")
+      .attr("onclick")
+      ?.match(/&fid=(.+?)&/);
+    post.fid = fidArray ? Number(fidArray[1]) : 0;
+    return post;
   }
 
   turnBoardPage(element: BoardTitle, page: number) {
@@ -156,12 +210,25 @@ export class ForumTitleProvider
       element.description = ` Page ${page}/${element.pagination}`;
       element.tooltip = `${element.title} page ${page}/${element.pagination}`;
       // element.contextValue = `threadp${page}`;
-      element.contextValue =
-        element.pagination === 1
-          ? `threadp0`
-          : page >= element.pagination
-          ? `threadpend`
-          : `threadp${page}`;
+      if (element instanceof FavoriteThreadTitle) {
+        element.contextValue =
+          element.pagination === 1
+            ? `favoriteonepage`
+            : element.page >= element.pagination
+            ? `favoriteend`
+            : element.page === 1
+            ? `favoritefirstpage`
+            : `favoritepage`;
+      } else {
+        element.contextValue =
+          element.pagination === 1
+            ? `threadonepage`
+            : element.page >= element.pagination
+            ? `threadend`
+            : element.page === 1
+            ? `threadfirstpage`
+            : `threadpage`;
+      }
       element.threadUri = Uri.parse(
         `s1:${element.path.slice(4, -5)}-${page}.${element.ext}`
       );
@@ -175,19 +242,20 @@ export class ThreadTitle extends TreeItem {
     public readonly title: string,
     public readonly path: string,
     public readonly fid: number,
-    public readonly replies: number,
-    public readonly collapsibleState: TreeItemCollapsibleState
+    public readonly replies: number // public readonly collapsibleState: TreeItemCollapsibleState
   ) {
-    super(title, collapsibleState);
+    super(title, TreeItemCollapsibleState.None);
     this.tooltip = this.title;
     // this.description = this.link.slice(0,-5);
     // this.description = `Page ${this.page}/${this.pagination}`;
     this.contextValue =
       this.pagination === 1
-        ? `threadp0`
+        ? `threadonepage`
         : this.page >= this.pagination
-        ? `threadpend`
-        : `threadp${this.page}`;
+        ? `threadend`
+        : this.page === 1
+        ? `threadfirstpage`
+        : `threadpage`;
     this.command = {
       title: "Show Thread",
       command: "opens1.showthread",
@@ -225,10 +293,9 @@ export class ThreadTitle extends TreeItem {
 export class BoardTitle extends TreeItem {
   constructor(
     public readonly title: string,
-    public readonly path: string,
-    public readonly collapsibleState: TreeItemCollapsibleState
+    public readonly path: string // public readonly collapsibleState: TreeItemCollapsibleState
   ) {
-    super(title, collapsibleState);
+    super(title, TreeItemCollapsibleState.Collapsed);
     this.tooltip = this.title;
     // this.description = this.link.slice(0,-5);
     // this.description = "";
@@ -243,15 +310,16 @@ export class BoardTitle extends TreeItem {
   iconPath = new ThemeIcon("comment-discussion");
 
   public page: number = 1;
-  public readonly fid: number = Number(this.path.slice(4, -5));
+  public readonly fid: number = this.path.includes("fid-")
+    ? Number(this.path.slice(4, -5))
+    : 0;
 }
 
 export class AccountTitle extends TreeItem {
   constructor(
-    public readonly title: string,
-    public readonly collapsibleState: TreeItemCollapsibleState
+    public readonly title: string // public readonly collapsibleState: TreeItemCollapsibleState
   ) {
-    super(title, collapsibleState);
+    super(title, TreeItemCollapsibleState.Collapsed);
     this.contextValue = `accounts`;
   }
 
@@ -261,12 +329,41 @@ export class AccountTitle extends TreeItem {
 export class OnlineUser extends TreeItem {
   constructor(
     public readonly username: string,
-    public readonly isMe: boolean,
-    public readonly collapsibleState: TreeItemCollapsibleState
+    public readonly isMe: boolean // public readonly collapsibleState: TreeItemCollapsibleState
   ) {
-    super(isMe ? `${username}(Me)` : username, collapsibleState);
+    super(isMe ? `${username}(Me)` : username, TreeItemCollapsibleState.None);
     this.contextValue = `onlineuser`;
   }
 
   iconPath = new ThemeIcon("account");
+}
+
+export class FavoritesTitle extends BoardTitle {
+  constructor(public readonly title: string, public readonly path: string) {
+    super(title, path);
+    this.iconPath = new ThemeIcon("star-full");
+    this.contextValue = "board";
+  }
+}
+
+export class FavoriteThreadTitle extends ThreadTitle {
+  constructor(
+    public readonly title: string,
+    public readonly path: string,
+    public readonly fid: number,
+    public readonly replies: number,
+    public readonly favid: number
+  ) {
+    super(`${title}(${replies}篇回复)`, path, fid, replies);
+    this.contextValue =
+      this.pagination === 1
+        ? `favoriteonepage`
+        : this.page >= this.pagination
+        ? `favoriteend`
+        : this.page === 1
+        ? `favoritefirstpage`
+        : `favoritepage`;
+  }
+
+  iconPath = new ThemeIcon("star-empty");
 }

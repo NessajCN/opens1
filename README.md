@@ -42,6 +42,12 @@ To be tested.
 
 The extension is in early Alpha version.
 
+## 0.5.0 - 2022-10-11
+
+- Add "Favorites" to the top view.
+> Favorite a thread simply by right clicking on it and `Add to Favorites`.
+> To remove favorited thread, do the same to the *Favorite* view items with the exception of `Remove from Favorites`.
+
 ## 0.4.4 - 2022-10-10
 
 - Add character fixing for custom words.
@@ -59,11 +65,6 @@ The extension is in early Alpha version.
 - Add "Quoted Reply" feature in disguised thread views.
 
 - Fix key binding in disguised views.(Contributed by [iriyano](https://github.com/aaeviru) )
-
-
-## 0.3.0 - 2022-10-1
-
-- Add member info display on mouse hover for disguised display style.
 
 
 ## Features incoming

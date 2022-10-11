@@ -3,8 +3,8 @@ import * as cheerio from "cheerio";
 import got from "got";
 import { S1URL, NewPostForm, ReplyForm, Newpost } from "../types/S1types";
 import { getFormHash } from "./auth";
-import { Socket } from "socket.io-client";
 import { workspace } from "vscode";
+import { FavoriteThreadTitle, ThreadTitle } from "../threads/ForumTitle";
 
 const charFix = (text: string) => {
   const charList =
@@ -12,7 +12,7 @@ const charFix = (text: string) => {
 
   charList.forEach((chars) => {
     if (text.includes(chars)) {
-      const re = new RegExp(chars,"g");
+      const re = new RegExp(chars, "g");
       text = text.replace(re, (word) =>
         word
           .split("")
@@ -60,9 +60,7 @@ export const submitQuotedReply = async (
   fid: string,
   pid: string,
   replytext: string,
-  cookieJar: CookieJar,
-  socket: Socket,
-  onlineUsers: Map<string, string>
+  cookieJar: CookieJar
 ) => {
   const doc = await got(
     `${S1URL.host}${S1URL.replyPath}&fid=${fid}&extra=&tid=${tid}&repquote=${pid}`,
@@ -160,3 +158,37 @@ export const submitReply = async (
   }).text();
   return response;
 };
+
+export const favorite = async (thread: ThreadTitle, cookieJar: CookieJar) => {
+  const { loginhash: _, formhash } = await getFormHash(
+    `/thread-${thread.tid}-1-1.html`,
+    cookieJar
+  );
+  await got(
+    `${S1URL.host}${S1URL.favoritePath}&id=${thread.tid}&formhash=${formhash}`,
+    {
+      cookieJar,
+    }
+  );
+};
+
+export const unfavorite = async (thread: FavoriteThreadTitle, cookieJar: CookieJar) => {
+  const { loginhash: _, formhash } = await getFormHash(
+    S1URL.favReferer,
+    cookieJar
+  );
+  await got(
+    `${S1URL.host}${S1URL.favoritePath}&op=delete&favid=${thread.favid}`,
+    {
+      method: "POST",
+      form: {
+        referer: `${S1URL.host}${S1URL.favReferer}`,
+        deletesubmit: "true",
+        formhash,
+        handlekey: `a_delete_${thread.favid}`
+      },
+      cookieJar,
+    }
+  );
+};
+

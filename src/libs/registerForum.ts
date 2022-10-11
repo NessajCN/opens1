@@ -10,10 +10,18 @@ import {
   BoardTitle,
   ThreadTitle,
   AccountTitle,
+  FavoritesTitle,
+  FavoriteThreadTitle,
 } from "../threads/ForumTitle";
 import { loginPrompt, logout, login } from "./auth";
 import { CookieJar } from "tough-cookie";
-import { submitReply, submitNewPost, submitQuotedReply } from "./submit";
+import {
+  submitReply,
+  submitNewPost,
+  submitQuotedReply,
+  favorite,
+  unfavorite
+} from "./submit";
 import { replyPrompt, newpostPrompt } from "./prompt";
 
 import ThreadProvider from "../threads/ThreadProvider";
@@ -110,7 +118,9 @@ const registerForum = (
     commands.registerCommand(
       "opens1.updateview",
       (board: BoardTitle | AccountTitle) => {
-        if (board instanceof BoardTitle) {
+        if (board instanceof FavoritesTitle) {
+          forumProvider.updateView(board);
+        } else if (board instanceof BoardTitle) {
           forumProvider.turnBoardPage(board, 1);
         } else if (board instanceof AccountTitle) {
           forumProvider.updateView(board);
@@ -160,6 +170,7 @@ const registerForum = (
       }
     )
   );
+
   subscriptions.push(
     commands.registerCommand(
       "opens1.lastthreadpage",
@@ -173,6 +184,7 @@ const registerForum = (
       }
     )
   );
+
   subscriptions.push(
     commands.registerCommand(
       "opens1.latestthreadpage",
@@ -186,6 +198,7 @@ const registerForum = (
       }
     )
   );
+
   subscriptions.push(
     commands.registerCommand(
       "opens1.turntopage",
@@ -209,6 +222,30 @@ const registerForum = (
           currentThread = thread;
           await showThread(thread);
         }
+      }
+    )
+  );
+
+  subscriptions.push(
+    commands.registerCommand(
+      "opens1.favorite",
+      async (thread?: ThreadTitle | undefined) => {
+        thread = getThread(thread);
+        if (thread) {
+          await favorite(thread, cookieJar);
+        }
+        forumProvider.favorites &&
+          forumProvider.updateView(forumProvider.favorites);
+      }
+    )
+  );
+  subscriptions.push(
+    commands.registerCommand(
+      "opens1.unfavorite",
+      async (thread: FavoriteThreadTitle) => {
+        await unfavorite(thread, cookieJar);
+        forumProvider.favorites &&
+          forumProvider.updateView(forumProvider.favorites);
       }
     )
   );
@@ -250,9 +287,7 @@ const registerForum = (
             fid,
             pid,
             replytext,
-            cookieJar,
-            socket,
-            onlineUsers
+            cookieJar
           );
           const thread = getThread();
           if (thread && quotedAuthor) {
