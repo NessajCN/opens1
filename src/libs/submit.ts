@@ -172,7 +172,10 @@ export const favorite = async (thread: ThreadTitle, cookieJar: CookieJar) => {
   );
 };
 
-export const unfavorite = async (thread: FavoriteThreadTitle, cookieJar: CookieJar) => {
+export const unfavorite = async (
+  thread: FavoriteThreadTitle,
+  cookieJar: CookieJar
+) => {
   const { loginhash: _, formhash } = await getFormHash(
     S1URL.favReferer,
     cookieJar
@@ -185,10 +188,9 @@ export const unfavorite = async (thread: FavoriteThreadTitle, cookieJar: CookieJ
         referer: `${S1URL.host}${S1URL.favReferer}`,
         deletesubmit: "true",
         formhash,
-        handlekey: `a_delete_${thread.favid}`
+        handlekey: `a_delete_${thread.favid}`,
       },
       cookieJar,
     }
   );
 };
-

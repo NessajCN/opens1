@@ -82,8 +82,6 @@ export class ForumTitleProvider
                 "home.php?mod=space&do=favorite&type=thread"
                 // TreeItemCollapsibleState.Collapsed
               );
-              // this.favorites.iconPath = new ThemeIcon("star-full");
-              // this.favorites.contextValue = "board";
               this.accounts = new AccountTitle(
                 "OpenS1用户"
                 // TreeItemCollapsibleState.Collapsed

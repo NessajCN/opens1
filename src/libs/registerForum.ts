@@ -48,8 +48,7 @@ const registerForum = (
   threadProvider: ThreadProvider,
   memberInfoProvider: MemberInfoProvider,
   quotedReplyProvider: QuotedReplyProvider,
-  socket: Socket,
-  onlineUsers: Map<string, string>
+  socket: Socket
 ) => {
   let currentThread: ThreadTitle | undefined;
 
