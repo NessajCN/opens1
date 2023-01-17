@@ -4,6 +4,7 @@ import {
   ExtensionContext,
   workspace,
   languages,
+  ConfigurationChangeEvent,
 } from "vscode";
 import {
   ForumTitleProvider,
@@ -84,8 +85,10 @@ const registerForum = (
   );
 
   subscriptions.push(
-    workspace.onDidChangeConfiguration(() => {
-      forumProvider.refresh();
+    workspace.onDidChangeConfiguration((e: ConfigurationChangeEvent) => {
+      if (e.affectsConfiguration("opens1")) {
+        forumProvider.refresh();
+      }
     })
   );
 
