@@ -42,29 +42,15 @@ To be tested.
 
 The extension is in early Alpha version.
 
+## 0.5.1 - 2023-1-17
+
+- Auto refresh on config change.
+
 ## 0.5.0 - 2022-10-11
 
 - Add "Favorites" to the top view.
 > Favorite a thread simply by right clicking on it and `Add to Favorites`.
 > To remove favorited thread, do the same to the *Favorite* view items with the exception of `Remove from Favorites`.
-
-## 0.4.4 - 2022-10-10
-
-- Add character fixing for custom words.
-
-## 0.4.3 - 2022-10-9
-
-- Fix bug of notification.
-
-## 0.4.2 - 2022-10-9
-
-- Optimized display of online users of OpenS1.
-
-## 0.4.0 - 2022-10-5
-
-- Add "Quoted Reply" feature in disguised thread views.
-
-- Fix key binding in disguised views.(Contributed by [iriyano](https://github.com/aaeviru) )
 
 
 ## Features incoming

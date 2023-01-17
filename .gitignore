@@ -6,3 +6,5 @@ node_modules
 resources/
 vsc-extension-quickstart.md
 devnote.md
+.env
+

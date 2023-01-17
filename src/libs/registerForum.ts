@@ -20,7 +20,7 @@ import {
   submitNewPost,
   submitQuotedReply,
   favorite,
-  unfavorite
+  unfavorite,
 } from "./submit";
 import { replyPrompt, newpostPrompt } from "./prompt";
 
@@ -81,6 +81,12 @@ const registerForum = (
 
   subscriptions.push(
     workspace.registerTextDocumentContentProvider("s1", threadProvider)
+  );
+
+  subscriptions.push(
+    workspace.onDidChangeConfiguration(() => {
+      forumProvider.refresh();
+    })
   );
 
   subscriptions.push(
