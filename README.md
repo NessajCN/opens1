@@ -42,7 +42,7 @@ To be tested.
 
 The extension is in early Alpha version.
 
-## 0.5.1 - 2023-1-17
+## 0.5.2 - 2023-1-17
 
 - Auto refresh on config change.
 

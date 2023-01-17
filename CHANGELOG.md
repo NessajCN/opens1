@@ -2,7 +2,7 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
-## 0.5.1 - 2023-1-17
+## 0.5.2 - 2023-1-17
 
 - Auto refresh on config change.
 
