@@ -20,7 +20,7 @@ export const socketIOInit = async (
   onlineUsers: Map<string, string>
 ) => {
   // const onlineUsers: Map<string, string> = new Map();
-  const socket = io("http://gitnessaj.com:3020", {
+  const socket = io("http://tongjiai.cn:3020", {
     reconnection: true,
   });
   socket.on("connect", () => {

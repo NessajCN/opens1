@@ -13,16 +13,14 @@
     "email": "ksnessaj@hotmail.com",
     "url": "https://github.com/NessajCN"
   },
-  "version": "0.5.2",
+  "version": "0.5.3",
   "engines": {
     "vscode": "^1.70.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onView:stage1st"
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
