@@ -2,6 +2,10 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.6 - 2023-10-26
+
+- Remove `keytar` dependency.
+
 ## 0.5.2 - 2023-3-14
 
 - New turnserver.

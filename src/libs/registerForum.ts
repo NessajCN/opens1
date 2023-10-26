@@ -5,6 +5,7 @@ import {
   workspace,
   languages,
   ConfigurationChangeEvent,
+  SecretStorage,
 } from "vscode";
 import {
   ForumTitleProvider,
@@ -44,6 +45,7 @@ const showThread = async (thread: ThreadTitle) => {
 
 const registerForum = (
   subscriptions: ExtensionContext["subscriptions"],
+  secrets: SecretStorage,
   forumProvider: ForumTitleProvider,
   cookieJar: CookieJar,
   threadProvider: ThreadProvider,
@@ -260,7 +262,7 @@ const registerForum = (
   subscriptions.push(
     commands.registerCommand("opens1.signin", async () => {
       const logininfo = await loginPrompt();
-      const authenticated = await login(logininfo, cookieJar, socket);
+      const authenticated = await login(secrets,logininfo, cookieJar, socket);
       if (authenticated) {
         forumProvider.credential = logininfo;
         window.showInformationMessage(
@@ -275,7 +277,7 @@ const registerForum = (
   );
   subscriptions.push(
     commands.registerCommand("opens1.signout", async () => {
-      await logout(cookieJar, socket);
+      await logout(secrets, cookieJar, socket);
       forumProvider.credential = GUEST;
       forumProvider.refresh();
       window.showInformationMessage("You have logged out.");

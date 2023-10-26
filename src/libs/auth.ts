@@ -1,5 +1,4 @@
-import { InputBoxOptions, commands, window } from "vscode";
-import { findCredentials } from "keytar";
+import { InputBoxOptions, SecretStorage, commands, window } from "vscode";
 import {
   S1URL,
   Credential,
@@ -9,20 +8,19 @@ import {
 } from "../types/S1types";
 import got from "got";
 import { CookieJar, Cookie } from "tough-cookie";
-import { setPassword, deletePassword } from "keytar";
 import { Socket } from "socket.io-client";
 
-export const checkCredential = async () => {
-  const storedCredentials = await findCredentials(S1URL.title);
-  if (storedCredentials.length) {
-    const credential: Credential = {
-      username: storedCredentials[0].account,
-      password: storedCredentials[0].password,
-    };
-    return credential;
-  } else {
+export const checkCredential = async (secrets: SecretStorage) => {
+  const username = await secrets.get("username");
+  const password = await secrets.get("password");
+  if (!username || !password) {
     return GUEST;
   }
+  const credential: Credential = {
+    username,
+    password,
+  };
+  return credential;
 };
 
 export const loginPrompt = async () => {
@@ -77,32 +75,35 @@ export const getFormHash = async (
   return formHash;
 };
 
-export const clearStoredCredentials = async () => {
-  const storedCredentials = await findCredentials(S1URL.title);
-  storedCredentials.forEach(async (credential, index) => {
-    await deletePassword(S1URL.title, credential.account);
-  });
+const clearStoredCredentials = async (secrets: SecretStorage) => {
+  await secrets.delete("username");
+  await secrets.delete("password");
   commands.executeCommand("setContext", "opens1.authenticated", false);
 };
 
-export const logout = async (cookieJar: CookieJar, socket: Socket) => {
+export const logout = async (
+  secrets: SecretStorage,
+  cookieJar: CookieJar,
+  socket: Socket
+) => {
   const { loginhash: _, formhash } = await getFormHash(
     `${S1URL.logoutPath}`,
     cookieJar
   );
   const logoutURL: string = `${S1URL.host}${S1URL.logoutPath}&formhash=${formhash}`;
   await got(logoutURL, { cookieJar }).text();
-  await clearStoredCredentials();
+  await clearStoredCredentials(secrets);
   socket.emit("signout");
 };
 
 export const login = async (
+  secrets: SecretStorage,
   credential: Credential,
   cookieJar: CookieJar,
-  socket: Socket
+  socket: Socket,
 ) => {
   if (credential === GUEST) {
-    await clearStoredCredentials();
+    await clearStoredCredentials(secrets);
     return false;
   }
   const { loginhash, formhash } = await getFormHash(
@@ -127,10 +128,11 @@ export const login = async (
   });
   const auth = await checkAuth(cookieJar);
   if (auth) {
-    await setPassword(S1URL.title, credential.username, credential.password);
+    await secrets.store("username", credential.username);
+    await secrets.store("password", credential.password);
     socket.emit("identify", credential.username);
   } else {
-    await clearStoredCredentials();
+    await clearStoredCredentials(secrets);
   }
   commands.executeCommand("setContext", "opens1.authenticated", auth);
   return auth;
