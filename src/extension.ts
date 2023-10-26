@@ -4,7 +4,7 @@ import { ExtensionContext } from "vscode";
 import { ForumTitleProvider } from "./threads/ForumTitle";
 import { Credential, GUEST } from "./types/S1types";
 import { CookieJar } from "tough-cookie";
-import { checkCredential, login } from "./libs/auth";
+import { checkCredential, initAuthHelper, login } from "./libs/auth";
 import ThreadProvider from "./threads/ThreadProvider";
 import registerForum from "./libs/registerForum";
 import { socketIOInit } from "./libs/webrtc";
@@ -14,6 +14,7 @@ import { QuotedReplyProvider } from "./threads/QuotedReply";
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: ExtensionContext) {
+  initAuthHelper(context);
   const credential: Credential = await checkCredential();
   const cookieJar: CookieJar = new CookieJar();
   const stage1stProvider = new ForumTitleProvider(cookieJar, credential);

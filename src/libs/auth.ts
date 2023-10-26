@@ -1,5 +1,4 @@
-import { InputBoxOptions, commands, window } from "vscode";
-import { findCredentials } from "keytar";
+import { ExtensionContext, InputBoxOptions, SecretStorage, commands, window } from "vscode";
 import {
   S1URL,
   Credential,
@@ -9,17 +8,22 @@ import {
 } from "../types/S1types";
 import got from "got";
 import { CookieJar, Cookie } from "tough-cookie";
-import { setPassword, deletePassword } from "keytar";
 import { Socket } from "socket.io-client";
 
+let secretStorage: SecretStorage;
+
+export const initAuthHelper = (context: ExtensionContext) => {
+  secretStorage = context.secrets;
+};
+
 export const checkCredential = async () => {
-  const storedCredentials = await findCredentials(S1URL.title);
-  if (storedCredentials.length) {
-    const credential: Credential = {
-      username: storedCredentials[0].account,
-      password: storedCredentials[0].password,
+  const username = await secretStorage.get("username");
+  const password = await secretStorage.get("password");
+  if (username !== undefined && password !== undefined) {
+    return {
+      username,
+      password
     };
-    return credential;
   } else {
     return GUEST;
   }
@@ -78,10 +82,8 @@ export const getFormHash = async (
 };
 
 export const clearStoredCredentials = async () => {
-  const storedCredentials = await findCredentials(S1URL.title);
-  storedCredentials.forEach(async (credential, index) => {
-    await deletePassword(S1URL.title, credential.account);
-  });
+  await secretStorage.delete("username");
+  await secretStorage.delete("password");
   commands.executeCommand("setContext", "opens1.authenticated", false);
 };
 
@@ -127,7 +129,8 @@ export const login = async (
   });
   const auth = await checkAuth(cookieJar);
   if (auth) {
-    await setPassword(S1URL.title, credential.username, credential.password);
+    await secretStorage.store("username", credential.username);
+    await secretStorage.store("password", credential.password);
     socket.emit("identify", credential.username);
   } else {
     await clearStoredCredentials();

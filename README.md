@@ -13,23 +13,6 @@ As an alpha version, OpenS1 is now capable of
 Addtional features could be added in future releases. (or not ...)
 
 
-## Requirements
-
-If you are a Linux user, you may have to install some dependency to use `keytar`.
-e.g in Ubuntu:
-```
-sudo apt install libsecret-1-dev
-```
-in RedHat distros:
-```
-sudo yum install libsecret-devel
-```
-in Arch Linux:
-```
-sudo pacman -S libsecret
-```
-
-
 ## Extension Settings
 
 Configurations have not been contributed. I'll add them soon.
