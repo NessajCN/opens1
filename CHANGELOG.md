@@ -2,6 +2,10 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.6.1 - 2025-1-13
+
+- Fix authentication cookie key name.
+
 ## 0.6 - 2023-10-26
 
 - Remove `keytar` dependency.

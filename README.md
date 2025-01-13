@@ -24,21 +24,13 @@ To be tested.
 
 The extension is in early Alpha version.
 
+## 0.6.1 - 2025-1-13
+
+- Fix authentication cookie key name.
+
 ## 0.6 - 2023-10-26
 
 - Remove `keytar` dependency.
-
-
-## 0.5.2 - 2023-1-17
-
-- Auto refresh on config change.
-
-## 0.5.0 - 2022-10-11
-
-- Add "Favorites" to the top view.
-> Favorite a thread simply by right clicking on it and `Add to Favorites`.
-> To remove favorited thread, do the same to the *Favorite* view items with the exception of `Remove from Favorites`.
-
 
 ## Features incoming
 
