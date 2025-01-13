@@ -20,7 +20,7 @@ export const socketIOInit = async (
   onlineUsers: Map<string, string>
 ) => {
   // const onlineUsers: Map<string, string> = new Map();
-  const socket = io("http://tongjiai.cn:3020", {
+  const socket = io("https://sio.tongjiai.cn", {
     reconnection: true,
   });
   socket.on("connect", () => {
@@ -58,7 +58,7 @@ export const socketIOInit = async (
     thread.threadUri = Uri.parse(
       `s1:${thread.path.slice(4, -5)}-${thread.page}.${thread.ext}`
     );
-  window
+    window
       .showInformationMessage(`New reply: ${thread.title}`, "Read", "Ignore")
       .then((action) => {
         if (action === "Read") {

@@ -5,7 +5,7 @@ export const S1URL = {
   newPostPath: "/forum.php?mod=post&action=newthread",
   replyPath: "/forum.php?mod=post&action=reply",
   favoritePath: "/home.php?mod=spacecp&ac=favorite&type=thread",
-  favReferer:"/home.php?mod=space&do=favorite&view=me",
+  favReferer: "/home.php?mod=space&do=favorite&view=me",
   title: "stage1st",
 } as const;
 
@@ -15,18 +15,18 @@ export const GUEST: Credential = {
 } as const;
 
 export interface Credential {
-  username: string,
-  password: string
+  username: string;
+  password: string;
 }
 
 export interface Newpost {
-  subject: string,
-  message: string
+  subject: string;
+  message: string;
 }
 
 export interface FormHash {
-  loginhash: string | null,
-  formhash: string | null
+  loginhash: string | null;
+  formhash: string | null;
 }
 
 // export interface ThreadContent {
@@ -65,148 +65,148 @@ export interface LoginForm {
 }
 
 export interface PostContent {
-  pid: string,
-  author: string,
-  message: string,
-  num: string,
-  posttime: string
+  pid: string;
+  author: string;
+  message: string;
+  num: string;
+  posttime: string;
 }
 
 export interface Post {
-  subject: string,
-  fid: number,
-  tid: string,
-  page: string, 
-  contents: PostContent[]
+  subject: string;
+  fid: number;
+  tid: string;
+  page: string;
+  contents: PostContent[];
 }
 
 export interface Member {
-  username: string,
-  uid? : number,
-  readperm? : number,
-  currency? : number,
-  geese? : number,
-  friends? : number,
-  posts? : number,
-  replies? : number,
-  totalonline?: number,
-  lastvisited?: string,
-  registeredAt?: string,
-  score?: number,
-  level?: string
+  username: string;
+  uid?: number;
+  readperm?: number;
+  currency?: number;
+  geese?: number;
+  friends?: number;
+  posts?: number;
+  replies?: number;
+  totalonline?: number;
+  lastvisited?: string;
+  registeredAt?: string;
+  score?: number;
+  level?: string;
 }
 
 /**
  * New thread form body of POST request to {@linkcode S1URL.newPostPath}
  */
 export interface NewPostForm {
-    /**
-     * Random string generated when GET requesting {@linkcode S1URL.newPostPath}.
-     */
-    formhash: string,
-    /**
-     * Seconds since epoch time.
-     */
-    posttime: number,
-    /**
-     * WYSIWYG (what you see is what you get) editor enabling. Default '1'
-     */
-    wysiwyg: string,
-    /**
-     * Number of category name bracketed before thread subject. Set by forum owner.
-     */
-    typeid?: number,
-    /**
-     * Subject of the new thread.
-     */
-    subject: string,
-    /**
-     * Content body of the new thread.
-     */
-    message: string,
-    /**
-     * Reading permission of the thread. Default 0. 
-     */
-    readperm: number,
-    /**
-     * Allow forum to push notification to author. Default '1'
-     */
-    allownoticeauthor: string,
-    /**
-     * Allow display of the custom user signature text. Default '1'.
-     */
-    usesig: string,
-    /**
-     * Default ''
-     */
-    save: string,
-    /**
-     * Default 2592000
-     */
-    cookietime: number
+  /**
+   * Random string generated when GET requesting {@linkcode S1URL.newPostPath}.
+   */
+  formhash: string;
+  /**
+   * Seconds since epoch time.
+   */
+  posttime: number;
+  /**
+   * WYSIWYG (what you see is what you get) editor enabling. Default '1'
+   */
+  wysiwyg: string;
+  /**
+   * Number of category name bracketed before thread subject. Set by forum owner.
+   */
+  typeid?: number;
+  /**
+   * Subject of the new thread.
+   */
+  subject: string;
+  /**
+   * Content body of the new thread.
+   */
+  message: string;
+  /**
+   * Reading permission of the thread. Default 0.
+   */
+  readperm: number;
+  /**
+   * Allow forum to push notification to author. Default '1'
+   */
+  allownoticeauthor: string;
+  /**
+   * Allow display of the custom user signature text. Default '1'.
+   */
+  usesig: string;
+  /**
+   * Default ''
+   */
+  save: string;
+  /**
+   * Default 2592000
+   */
+  cookietime: number;
 }
 
 /**
  * Reply form body of POST request to {@linkcode S1URL.replyPath}
  */
- export interface ReplyForm {
-    /**
-     * Random string generated when GET requesting {@linkcode S1URL.replyPath}.
-     */
-    formhash: string,
-    /**
-     * Seconds since epoch time.
-     */
-    posttime: number,
-    /**
-     * WYSIWYG (what you see is what you get) editor enabling. Default '1'
-     */
-    wysiwyg: string,
-    /**
-     * Opionals to determine whether notifying the author.
-     * Noticeauthor is an encoded string to noticed replier
-     * who received a notification on main forum menu.
-     */
-     noticeauthor?: string,
-     /**
-      * Trimmed quoted reply content like:
-      * "[quote][size=2][url=forum.php?mod=redirect&goto=findpost&pid=57656505&ptid=2096733]
-      * [color=#999999]nessaj+发表于+2022-9-26+14:30[/color][/url][/size]\r\nReplyContent[/quote]"
-      * 
-      * pid is the same as reppid standing for the number of the reply content.
-      * ptid is the thread tid of the main thread.
-      */
-     noticetrimstr?: string,
-     /**
-      * Message to noticed author. usually the quoted reply text like "ReplyContent" above.
-      */
-     noticeauthormsg?: string,
-    /**
-     * Subject of the reply.
-     */
-    subject?: string,
-    /**
-     * Reply pid same as pid above. 
-     */
-    reppid?: string,
-    /**
-     * Reply pid same as pid above. 
-     */
-     reppost?: string,
-    /**
-     * Content body of the reply.
-     */
-    message: string,
-    /**
-     * Allow display of the custom user signature text. Default '1'.
-     */
-    usesig: string,
-    /**
-     * Default ''
-     */
-    save: string,
-    /**
-     * Default 2592000
-     */
-    cookietime: number
+export interface ReplyForm {
+  /**
+   * Random string generated when GET requesting {@linkcode S1URL.replyPath}.
+   */
+  formhash: string;
+  /**
+   * Seconds since epoch time.
+   */
+  posttime: number;
+  /**
+   * WYSIWYG (what you see is what you get) editor enabling. Default '1'
+   */
+  wysiwyg: string;
+  /**
+   * Opionals to determine whether notifying the author.
+   * Noticeauthor is an encoded string to noticed replier
+   * who received a notification on main forum menu.
+   */
+  noticeauthor?: string;
+  /**
+   * Trimmed quoted reply content like:
+   * "[quote][size=2][url=forum.php?mod=redirect&goto=findpost&pid=57656505&ptid=2096733]
+   * [color=#999999]nessaj+发表于+2022-9-26+14:30[/color][/url][/size]\r\nReplyContent[/quote]"
+   *
+   * pid is the same as reppid standing for the number of the reply content.
+   * ptid is the thread tid of the main thread.
+   */
+  noticetrimstr?: string;
+  /**
+   * Message to noticed author. usually the quoted reply text like "ReplyContent" above.
+   */
+  noticeauthormsg?: string;
+  /**
+   * Subject of the reply.
+   */
+  subject?: string;
+  /**
+   * Reply pid same as pid above.
+   */
+  reppid?: string;
+  /**
+   * Reply pid same as pid above.
+   */
+  reppost?: string;
+  /**
+   * Content body of the reply.
+   */
+  message: string;
+  /**
+   * Allow display of the custom user signature text. Default '1'.
+   */
+  usesig: string;
+  /**
+   * Default ''
+   */
+  save: string;
+  /**
+   * Default 2592000
+   */
+  cookietime: number;
 }
