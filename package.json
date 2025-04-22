@@ -287,10 +287,10 @@
     "eslint": "^8.23.1",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
-    "typescript": "^4.8.3"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.12",
+    "cheerio": "^1.0.0",
     "got": "^11.8.5",
     "install": "^0.13.0",
     "socket.io-client": "^4.5.2",
