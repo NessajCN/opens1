@@ -1,5 +1,5 @@
 export const S1URL = {
-  host: "https://bbs.saraba1st.com/2b",
+  host: "https://stage1st.com/2b",
   loginPath: "/member.php?mod=logging&action=login",
   logoutPath: "/member.php?mod=logging&action=logout",
   newPostPath: "/forum.php?mod=post&action=newthread",

@@ -13,7 +13,7 @@
     "email": "ksnessaj@hotmail.com",
     "url": "https://github.com/NessajCN"
   },
-  "version": "0.6.1",
+  "version": "0.6.2",
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -260,6 +260,7 @@
       "explorer": [
         {
           "id": "stage1st",
+          "icon": "logo/s1logo-256.png",
           "name": "Stage1st",
           "visibility": "collapsed"
         }

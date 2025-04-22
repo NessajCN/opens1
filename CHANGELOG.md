@@ -2,6 +2,10 @@
 
 All notable changes to the "opens1" extension will be documented in this file.
 
+## 0.6.2 - 2025-4-22
+
+- Update to new host `stage1st.com/2b`
+
 ## 0.6.1 - 2025-1-13
 
 - Fix authentication cookie key name.
