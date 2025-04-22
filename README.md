@@ -24,13 +24,9 @@ To be tested.
 
 The extension is in early Alpha version.
 
-## 0.6.1 - 2025-1-13
+## 0.6.3 - 2025-4-22
 
-- Fix authentication cookie key name.
-
-## 0.6 - 2023-10-26
-
-- Remove `keytar` dependency.
+- Update to new host `stage1st.com/2b`
 
 ## Features incoming
 
