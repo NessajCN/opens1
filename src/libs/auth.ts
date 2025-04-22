@@ -52,7 +52,7 @@ export const checkAuth = async (cookieJar: CookieJar) => {
   const cookies: Cookie[] = await cookieJar.getCookies(S1URL.host);
   const check: boolean = cookies
     .map((cookie: Cookie) => cookie.key)
-    .includes("B7Y9_0c0a_auth");
+    .some(e=>/^B7Y9_.*_auth$/.test(e));
   commands.executeCommand("setContext", "opens1.authenticated", check);
   return check;
 };
