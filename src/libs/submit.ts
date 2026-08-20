@@ -5,6 +5,11 @@ import { S1URL, NewPostForm, ReplyForm, Newpost } from "../types/S1types";
 import { getFormHash } from "./auth";
 import { workspace } from "vscode";
 import { FavoriteThreadTitle, ThreadTitle } from "../threads/ForumTitle";
+import {
+  PostResult,
+  forumRefererHeaders,
+  parsePostResult,
+} from "./postResult";
 
 const charFix = (text: string) => {
   const charList =
@@ -24,17 +29,27 @@ const charFix = (text: string) => {
   return text;
 };
 
+const postHeaders = (tid?: number | string, fid?: number | string) => {
+  if (tid !== undefined && fid !== undefined) {
+    return forumRefererHeaders(`/forum.php?mod=viewthread&tid=${tid}`);
+  }
+  return forumRefererHeaders("/forum.php");
+};
+
 export const submitNewPost = async (
   fid: number,
   newpost: Newpost,
   cookieJar: CookieJar
-) => {
+): Promise<PostResult> => {
   const { loginhash: _, formhash } = await getFormHash(
-    S1URL.newPostPath,
+    `${S1URL.newPostPath}&fid=${fid}`,
     cookieJar
   );
+  if (!formhash) {
+    return { ok: false, message: "Failed to get formhash. Please re-login." };
+  }
   const newPostForm: NewPostForm = {
-    formhash: formhash || "",
+    formhash,
     posttime: Math.floor(Date.now() / 1000),
     wysiwyg: "1",
     typeid: 151,
@@ -51,8 +66,9 @@ export const submitNewPost = async (
     cookieJar: cookieJar,
     method: "POST",
     form: newPostForm,
+    headers: postHeaders(undefined, fid),
   }).text();
-  return response;
+  return parsePostResult(response);
 };
 
 export const submitQuotedReply = async (
@@ -61,10 +77,10 @@ export const submitQuotedReply = async (
   pid: string,
   replytext: string,
   cookieJar: CookieJar
-) => {
+): Promise<{ author: string | null; result: PostResult }> => {
   const doc = await got(
     `${S1URL.host}${S1URL.replyPath}&fid=${fid}&extra=&tid=${tid}&repquote=${pid}`,
-    { cookieJar }
+    { cookieJar, headers: postHeaders(tid, fid) }
   ).text();
   const $ = cheerio.load(doc);
   const replyForm: ReplyForm = {
@@ -83,31 +99,36 @@ export const submitQuotedReply = async (
     cookietime: 2592000,
   };
 
-  $("#ct")
-    .children()
-    .each((i, el) => {
-      switch ($(el).attr("name")) {
-        case "formhash": {
-          replyForm.formhash = $(el).attr("value") || "";
-          break;
-        }
-        case "noticeauthor": {
-          replyForm.noticeauthor = $(el).attr("value") || "";
-          break;
-        }
-        case "noticetrimstr": {
-          replyForm.noticetrimstr = $(el).attr("value") || "";
-          break;
-        }
-        case "noticeauthormsg": {
-          replyForm.noticeauthormsg = $(el).attr("value") || "";
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    });
+  $("input[type='hidden']").each((_, el) => {
+    const name = $(el).attr("name");
+    const value = $(el).attr("value") || "";
+    switch (name) {
+      case "formhash":
+        replyForm.formhash = value;
+        break;
+      case "noticeauthor":
+        replyForm.noticeauthor = value;
+        break;
+      case "noticetrimstr":
+        replyForm.noticetrimstr = value;
+        break;
+      case "noticeauthormsg":
+        replyForm.noticeauthormsg = value;
+        break;
+      default:
+        break;
+    }
+  });
+
+  if (!replyForm.formhash) {
+    return {
+      author: null,
+      result: {
+        ok: false,
+        message: "Failed to get formhash for quoted reply. Please re-login.",
+      },
+    };
+  }
 
   // Find quoted author name and see if it's an online user of opens1.
   const quotedAuthorArray = replyForm.noticetrimstr?.match(
@@ -118,13 +139,14 @@ export const submitQuotedReply = async (
       ? quotedAuthorArray[1].trim()
       : null;
 
-  const replyURL = `${S1URL.host}/forum.php?mod=post&action=reply&fid=${fid}&tid=${tid}&extra=&replysubmit=yes`;
+  const replyURL = `${S1URL.host}/forum.php?mod=post&action=reply&fid=${fid}&tid=${tid}&extra=&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1`;
   const response = await got(replyURL, {
     cookieJar: cookieJar,
     method: "POST",
     form: replyForm,
+    headers: postHeaders(tid, fid),
   }).text();
-  return quotedAuthor;
+  return { author: quotedAuthor, result: parsePostResult(response) };
 };
 
 export const submitReply = async (
@@ -132,13 +154,16 @@ export const submitReply = async (
   fid: number,
   replytext: string,
   cookieJar: CookieJar
-) => {
+): Promise<PostResult> => {
   const { loginhash: _, formhash } = await getFormHash(
-    S1URL.replyPath,
+    `${S1URL.replyPath}&fid=${fid}&tid=${tid}`,
     cookieJar
   );
+  if (!formhash) {
+    return { ok: false, message: "Failed to get formhash. Please re-login." };
+  }
   const replyForm: ReplyForm = {
-    formhash: formhash || "",
+    formhash,
     posttime: Math.floor(Date.now() / 1000),
     wysiwyg: "1",
     noticeauthor: "",
@@ -150,13 +175,15 @@ export const submitReply = async (
     save: "",
     cookietime: 2592000,
   };
-  const replyURL = `${S1URL.host}/forum.php?mod=post&action=reply&fid=${fid}&tid=${tid}&extra=&replysubmit=yes`;
+  // Match forum fastpost endpoint; Referer is required by Discuz submitcheck.
+  const replyURL = `${S1URL.host}/forum.php?mod=post&action=reply&fid=${fid}&tid=${tid}&extra=&replysubmit=yes&infloat=yes&handlekey=fastpost&inajax=1`;
   const response = await got(replyURL, {
     cookieJar: cookieJar,
     method: "POST",
     form: replyForm,
+    headers: postHeaders(tid, fid),
   }).text();
-  return response;
+  return parsePostResult(response);
 };
 
 export const favorite = async (thread: ThreadTitle, cookieJar: CookieJar) => {
@@ -168,6 +195,7 @@ export const favorite = async (thread: ThreadTitle, cookieJar: CookieJar) => {
     `${S1URL.host}${S1URL.favoritePath}&id=${thread.tid}&formhash=${formhash}`,
     {
       cookieJar,
+      headers: postHeaders(thread.tid, thread.fid),
     }
   );
 };
@@ -191,6 +219,7 @@ export const unfavorite = async (
         handlekey: `a_delete_${thread.favid}`,
       },
       cookieJar,
+      headers: forumRefererHeaders(S1URL.favReferer),
     }
   );
 };

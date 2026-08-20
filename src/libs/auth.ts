@@ -61,10 +61,18 @@ export const getFormHash = async (
   path: string,
   cookieJar: CookieJar
 ): Promise<FormHash> => {
-  const result = await got(`${S1URL.host}${path}`, { cookieJar }).text();
+  const result = await got(`${S1URL.host}${path}`, {
+    cookieJar,
+    // Discuz/S1 rejects some requests without Referer.
+    headers: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      Referer: `${S1URL.host}/forum.php`,
+    },
+  }).text();
   const relogin: RegExp = /<div id="main_messaqge_(.+?)">/;
+  // Allow optional space before self-closing slash; some pages omit it.
   const reform: RegExp =
-    /<input type="hidden" name="formhash" value="(.+?)" \/>/;
+    /<input type="hidden" name="formhash" value="(.+?)"\s*\/?>/;
   const malogin =
     path.includes("action=login") && result ? result.match(relogin) : null;
   const maform = result ? result.match(reform) : null;
@@ -114,7 +122,7 @@ export const login = async (
   const loginform: LoginForm = {
     formhash: formhash || "",
     referer: S1URL.host,
-    loginfield: credential.username,
+    loginfield: "username",
     username: credential.username,
     password: credential.password,
     questionid: "0",
@@ -125,6 +133,10 @@ export const login = async (
     cookieJar: cookieJar,
     method: "POST",
     form: loginform,
+    headers: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      Referer: `${S1URL.host}/forum.php`,
+    },
   });
   const auth = await checkAuth(cookieJar);
   if (auth) {

@@ -292,13 +292,17 @@ const registerForum = (
         if (!replytext) {
           return;
         } else {
-          const quotedAuthor = await submitQuotedReply(
+          const { author: quotedAuthor, result } = await submitQuotedReply(
             tid,
             fid,
             pid,
             replytext,
             cookieJar
           );
+          if (!result.ok) {
+            window.showErrorMessage(`Quoted reply failed: ${result.message}`);
+            return;
+          }
           const thread = getThread();
           if (thread && quotedAuthor) {
             forumProvider.turnThreadPage(thread, thread.pagination);
@@ -333,12 +337,16 @@ const registerForum = (
         } else {
           thread = getThread(thread);
           if (thread) {
-            const response = await submitReply(
+            const result = await submitReply(
               thread.tid,
               thread.fid,
               replytext,
               cookieJar
             );
+            if (!result.ok) {
+              window.showErrorMessage(`Reply failed: ${result.message}`);
+              return;
+            }
             forumProvider.turnThreadPage(thread, thread.pagination);
             threadProvider.refresh(thread.threadUri);
             window.showInformationMessage("Reply submitted.");
@@ -354,7 +362,11 @@ const registerForum = (
       if (!newpost) {
         return;
       } else {
-        const response = await submitNewPost(board.fid, newpost, cookieJar);
+        const result = await submitNewPost(board.fid, newpost, cookieJar);
+        if (!result.ok) {
+          window.showErrorMessage(`New post failed: ${result.message}`);
+          return;
+        }
         forumProvider.updateView(board);
         window.showInformationMessage("New post submitted.");
       }
