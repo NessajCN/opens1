@@ -9,6 +9,7 @@ import {
 import got from "got";
 import { CookieJar, Cookie } from "tough-cookie";
 import { Socket } from "socket.io-client";
+import { ForumTitleProvider } from "../threads/ForumTitle";
 
 export const checkCredential = async (secrets: SecretStorage) => {
   const username = await secrets.get("username");
@@ -52,14 +53,14 @@ export const checkAuth = async (cookieJar: CookieJar) => {
   const cookies: Cookie[] = await cookieJar.getCookies(S1URL.host);
   const check: boolean = cookies
     .map((cookie: Cookie) => cookie.key)
-    .some(e=>/^B7Y9_.*_auth$/.test(e));
+    .some((e) => /^B7Y9_.*_auth$/.test(e));
   commands.executeCommand("setContext", "opens1.authenticated", check);
   return check;
 };
 
 export const getFormHash = async (
   path: string,
-  cookieJar: CookieJar
+  cookieJar: CookieJar,
 ): Promise<FormHash> => {
   const result = await got(`${S1URL.host}${path}`, { cookieJar }).text();
   const relogin: RegExp = /<div id="main_messaqge_(.+?)">/;
@@ -84,11 +85,11 @@ const clearStoredCredentials = async (secrets: SecretStorage) => {
 export const logout = async (
   secrets: SecretStorage,
   cookieJar: CookieJar,
-  socket: Socket
+  socket: Socket,
 ) => {
   const { loginhash: _, formhash } = await getFormHash(
     `${S1URL.logoutPath}`,
-    cookieJar
+    cookieJar,
   );
   const logoutURL: string = `${S1URL.host}${S1URL.logoutPath}&formhash=${formhash}`;
   await got(logoutURL, { cookieJar }).text();
@@ -108,7 +109,7 @@ export const login = async (
   }
   const { loginhash, formhash } = await getFormHash(
     `${S1URL.loginPath}`,
-    cookieJar
+    cookieJar,
   );
   const loginURL: string = `${S1URL.host}${S1URL.loginPath}&loginsubmit=yes&loginhash=${loginhash}&inajax=1`;
   const loginform: LoginForm = {

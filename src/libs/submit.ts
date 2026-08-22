@@ -17,7 +17,7 @@ const charFix = (text: string) => {
         word
           .split("")
           .map((char) => `&#${char.charCodeAt(0)};`)
-          .join("")
+          .join(""),
       );
     }
   });
@@ -27,11 +27,11 @@ const charFix = (text: string) => {
 export const submitNewPost = async (
   fid: number,
   newpost: Newpost,
-  cookieJar: CookieJar
+  cookieJar: CookieJar,
 ) => {
   const { loginhash: _, formhash } = await getFormHash(
     S1URL.newPostPath,
-    cookieJar
+    cookieJar,
   );
   const newPostForm: NewPostForm = {
     formhash: formhash || "",
@@ -51,6 +51,7 @@ export const submitNewPost = async (
     cookieJar: cookieJar,
     method: "POST",
     form: newPostForm,
+    headers: { Referer: `${S1URL.host}/forum.php}` },
   }).text();
   return response;
 };
@@ -60,11 +61,11 @@ export const submitQuotedReply = async (
   fid: string,
   pid: string,
   replytext: string,
-  cookieJar: CookieJar
+  cookieJar: CookieJar,
 ) => {
   const doc = await got(
     `${S1URL.host}${S1URL.replyPath}&fid=${fid}&extra=&tid=${tid}&repquote=${pid}`,
-    { cookieJar }
+    { cookieJar, headers: { Referer: `${S1URL.host}/forum.php}` } },
   ).text();
   const $ = cheerio.load(doc);
   const replyForm: ReplyForm = {
@@ -111,7 +112,7 @@ export const submitQuotedReply = async (
 
   // Find quoted author name and see if it's an online user of opens1.
   const quotedAuthorArray = replyForm.noticetrimstr?.match(
-    /\[color=#999999\](.+?)发表于/
+    /\[color=#999999\](.+?)发表于/,
   );
   const quotedAuthor =
     quotedAuthorArray && quotedAuthorArray[1]
@@ -123,6 +124,7 @@ export const submitQuotedReply = async (
     cookieJar: cookieJar,
     method: "POST",
     form: replyForm,
+    headers: { Referer: `${S1URL.host}/forum.php}` },
   }).text();
   return quotedAuthor;
 };
@@ -131,11 +133,11 @@ export const submitReply = async (
   tid: number,
   fid: number,
   replytext: string,
-  cookieJar: CookieJar
+  cookieJar: CookieJar,
 ) => {
   const { loginhash: _, formhash } = await getFormHash(
     S1URL.replyPath,
-    cookieJar
+    cookieJar,
   );
   const replyForm: ReplyForm = {
     formhash: formhash || "",
@@ -155,6 +157,7 @@ export const submitReply = async (
     cookieJar: cookieJar,
     method: "POST",
     form: replyForm,
+    headers: { Referer: `${S1URL.host}/forum.php}` },
   }).text();
   return response;
 };
@@ -162,23 +165,23 @@ export const submitReply = async (
 export const favorite = async (thread: ThreadTitle, cookieJar: CookieJar) => {
   const { loginhash: _, formhash } = await getFormHash(
     `/thread-${thread.tid}-1-1.html`,
-    cookieJar
+    cookieJar,
   );
   await got(
     `${S1URL.host}${S1URL.favoritePath}&id=${thread.tid}&formhash=${formhash}`,
     {
       cookieJar,
-    }
+    },
   );
 };
 
 export const unfavorite = async (
   thread: FavoriteThreadTitle,
-  cookieJar: CookieJar
+  cookieJar: CookieJar,
 ) => {
   const { loginhash: _, formhash } = await getFormHash(
     S1URL.favReferer,
-    cookieJar
+    cookieJar,
   );
   await got(
     `${S1URL.host}${S1URL.favoritePath}&op=delete&favid=${thread.favid}`,
@@ -191,6 +194,6 @@ export const unfavorite = async (
         handlekey: `a_delete_${thread.favid}`,
       },
       cookieJar,
-    }
+    },
   );
 };

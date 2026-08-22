@@ -24,9 +24,10 @@ To be tested.
 
 The extension is in early Alpha version.
 
-## 0.6.3 - 2025-4-22
+## 0.6.4 - 2026-8-22
 
-- Update to new host `stage1st.com/2b`
+- Fix a bug caused by Discuz which denies new posts or replies without the headers without Referer.
+- Bump dependencies.
 
 ## Features incoming
 
