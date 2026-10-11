@@ -20,13 +20,18 @@ export class ForumTitleProvider
     TreeDataProvider<ThreadTitle | BoardTitle | AccountTitle | OnlineUser>
 {
   private _onDidChangeTreeData: EventEmitter<
-    ThreadTitle | BoardTitle | AccountTitle | OnlineUser | undefined | void
+    ThreadTitle | BoardTitle | AccountTitle | OnlineUser | null | undefined
   > = new EventEmitter<
-    ThreadTitle | BoardTitle | AccountTitle | OnlineUser | undefined | void
+    ThreadTitle | BoardTitle | AccountTitle | OnlineUser | null | undefined
   >();
 
   readonly onDidChangeTreeData: Event<
-    ThreadTitle | BoardTitle | AccountTitle | OnlineUser | undefined | void
+    ThreadTitle |
+    BoardTitle |
+    AccountTitle |
+    OnlineUser |
+    null |
+    undefined
   > = this._onDidChangeTreeData.event;
 
   public accounts: AccountTitle | undefined;
@@ -37,7 +42,7 @@ export class ForumTitleProvider
   public opens1Users: Set<string> = new Set();
 
   refresh(): void {
-    this._onDidChangeTreeData.fire();
+    this._onDidChangeTreeData.fire(null);
   }
 
   updateView(
@@ -305,7 +310,7 @@ export class BoardTitle extends TreeItem {
     // };
   }
 
-  iconPath = new ThemeIcon("comment-discussion");
+  iconPath = "comment-discussion";
 
   public page: number = 1;
   public readonly fid: number = this.path.includes("fid-")
@@ -321,7 +326,7 @@ export class AccountTitle extends TreeItem {
     this.contextValue = `accounts`;
   }
 
-  iconPath = new ThemeIcon("account");
+  iconPath = "account";
 }
 
 export class OnlineUser extends TreeItem {
@@ -333,13 +338,13 @@ export class OnlineUser extends TreeItem {
     this.contextValue = `onlineuser`;
   }
 
-  iconPath = new ThemeIcon("account");
+  iconPath = "account";
 }
 
 export class FavoritesTitle extends BoardTitle {
   constructor(public readonly title: string, public readonly path: string) {
     super(title, path);
-    this.iconPath = new ThemeIcon("star-full");
+    this.iconPath = "star-full";
     this.contextValue = "board";
   }
 }
@@ -363,5 +368,5 @@ export class FavoriteThreadTitle extends ThreadTitle {
         : `favoritepage`;
   }
 
-  iconPath = new ThemeIcon("star-empty");
+  iconPath = "star-empty";
 }
